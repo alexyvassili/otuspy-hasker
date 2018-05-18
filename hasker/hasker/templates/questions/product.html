@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+{% load products_extras %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Игровые приставки</a></li>
+              <li class="breadcrumb-item active">{{product.name}}</li>
+              <!-- <li class="breadcrumb-item active">Data</li> -->
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{product.name}}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+              <div class="btn-group mr-2 main-toolbar" role="group" aria-label="First group">
+                <button type="button" class="btn btn-secondary  main-toolbar-btn">Описание</button>
+                <button type="button" class="btn btn-secondary main-toolbar-btn">Характеристики</button>
+                <button type="button" class="btn btn-secondary main-toolbar-btn">Цены</button>
+                <button type="button" class="btn btn-secondary main-toolbar-btn">Обзоры</button>
+                <button type="button" class="btn btn-secondary main-toolbar-btn">Обсуждения</button>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container description">
+    <div class="row">
+        <div class="col-md-4 main-img">
+            <img class="prod-img" src="{{ product.image.url }}">
+        </div>
+        <div class="col-md-4">
+            <h5 class="description-head">Коротко о товаре</h5>
+            <ul class="description-list">
+                {% for property in properties %}
+                <li>{{property}}</li>
+                {% endfor %}
+            </ul>        
+        </div>
+        <div class="col-md-4">
+            <div class="card main-card" style="width: 20rem;">
+              <div class="card-block cost-card">
+                <h4 class="card-title cost"><!-- product.cost|costformat --> {{ product.price|costformat }} ₽</h4>
+                <p class="card-text cost-text">Доставка до 4 дней<br />Есть самовывоз</p>
+                <a href="#" class="btn btn-primary btn-lg cart-btn">В корзину</a>
+              </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}
