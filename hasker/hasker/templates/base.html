@@ -2,24 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{title}} - YMarket</title>
+    <title>{{title}} - Hasker</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="/static/assets/bootstrap4.min.css">
+    <link rel="stylesheet" href="/static/assets/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
 </head>
 <body>
-{% block content %}{% endblock %}
-<footer class="footer">
-      <div class="container">
-        <span class="text-muted small"><small>Footer text, 2018.</small></span>
+
+{% include 'navbar.html' %}
+
+<div class="container-fluid">
+  <div class="row">
+
+    {% include 'sidebar_login.html' %}
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 h-100">
+          <div class="container-fluid main-container h-100">
+            <div class="row h-100">
+              <div class="col-md-8 h-100">
+
+                {% block content %}{% endblock %}
+
+              </div>
+              <div class="col-md-4 h-100 trending">
+                {% include 'trending.html' %}
+              </div>
+            </div>
+           </div>
+        </main>
+  </div>
+</div>
+        </main>
+
       </div>
-    </footer>
+    </div>
 
-<script src="/static/assets/jquery-3.2.1.slim.min.js"></script>
-<script src="/static/assets/popper.min.js"></script>
-<script src="/static/assets/bootstrap4.min.js"></script>
 
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/assets/jquery-3.3.1.slim.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/static/assets/popper.min.js"></script>
+    <script src="/static/assets/bootstrap.min.js"></script>
+
+    <!-- Icons -->
+    <script src="/static/assets/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
 
 </body>
 </html>

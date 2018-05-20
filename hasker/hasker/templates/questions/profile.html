@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+ <ul class="list-group main-section">
+  <li class="list-group-item profile-title">
+    Profile Settings
+  </li>
+  <li class="list-group-item profile-avatar">
+    <img src="/static/img/avatar.jpg" class="profile-avatar-img">
+  </li>
+  <li class="list-group-item profile-form">
+    <form>
+  <div class="form-group">
+    <label for="ProfileImage" class="form-profile-img-label">Download your photo.<br />Max size is 2 Mb.</label>
+    <input type="file" class="form-control-file" id="ProfileImage">
+    <a href="#" class="btn btn-outline-danger btn-sm">Delete Photo</a>
+  </div>
+  <fieldset disabled>
+  <div class="form-group profile-form-group">
+      <label class="new-question-form-label" for="disabledTextInput">E-Mail</label>
+      <input type="email" id="disabledEmailInput" class="form-control" value="kit.nik@gmail.com">
+  </div>
+  </fieldset>
+  <div class="form-group profile-form-group">
+    <label class="new-question-form-label" for="userProfileFormLogin">Login</label>
+    <input type="text" class="form-control" id="userProfileFormLogin" value="kit.nik">
+  </div>
+  <!-- Короче, ниже скрытое поле - это баг, значение по умолчанию почему-то пропадает из
+  формы на этом месте. Поэтому пришлось вставить пустое скрытое поле. Может csrf token потом
+  сюда зайдёт -->
+  <fieldset disabled>
+  <div class="form-group profile-form-group">
+      <!-- <label class="new-question-form-label" for="disabledTextInput">E-Mail</label> -->
+      <input type="text" id="disabledBugInput" class="form-control d-none" value="">
+  </div>
+  </fieldset>
+  <div class="form-group profile-form-group">
+    <label class="new-question-form-label" for="userProfileFormName">Name</label>
+    <input type="text" class="form-control" id="userProfileFormName" value="Nikita Kuleshov">
+  </div>
+  <div class="form-group profile-form-group">
+    <label class="new-question-form-label" for="userProfileFormAbout">About</label>
+    <input type="text" class="form-control" id="userProfileFormAbout" value="MMA fighter">
+  </div>
+  <div class="form-group new-question-form-submit">
+  <button type="submit" class="btn btn-primary">Update Profile</button>
+  </div>
+</form>
+  </li>
+ </ul>
+{% endblock %}
