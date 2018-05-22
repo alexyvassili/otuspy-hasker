@@ -10,4 +10,5 @@ urlpatterns = [
     path('ask', views.ask, name='ask'),
     path('user', views.profile, name='user_profile'),
     path('search', views.search, name='search'),
+    path('signup/', views.signup, name='signup')
 ]

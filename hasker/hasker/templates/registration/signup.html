@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load addcss %}
+<ul class="list-group main-section">
+  <li class="list-group-item profile-title">
+    Sign Up
+  </li>
+  <li class="list-group-item login-message">
+    
+  </li>
+  <li class="list-group-item d-flex justify-content-center login-form">
+	<div class="login-form-wrapper">
+	    <form method="post">
+	    	{% csrf_token %}
+		  <div class="form-group profile-form-group">
+		      <label class="new-question-form-label" for="{{form.username.id_for_label}}">Login</label>
+		      {{ form.username|addcss:"form-control"}}
+		  </div>
+		  <div class="form-group profile-form-group">
+		      <label class="new-question-form-label" for="{{form.name.id_for_label}}">Name</label>
+		      {{ form.name|addcss:"form-control"}}
+		  </div>
+		  <div class="form-group profile-form-group">
+		      <label class="new-question-form-label" for="{{form.email.id_for_label}}">E-mail</label>
+		      {{ form.email|addcss:"form-control"}}
+		      {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <p class="error">{{error}}</p>
+                {% endfor %}
+              {% endif %}
+		  </div>
+		  <div class="form-group profile-form-group">
+              <label class="new-question-form-label" for="{{form.password1.id_for_label}}">Password</label>
+              {{ form.password1|addcss:"form-control"}}
+              {% if form.password1.errors %}
+                {% for error in form.password1.errors %}
+                    <p class="error">{{error}}</p>
+                {% endfor %}
+              {% endif %}
+          </div>
+          <div class="form-group profile-form-group">
+              <label class="new-question-form-label" for="{{form.password2.id_for_label}}">Confirm password</label>
+              {{ form.password2|addcss:"form-control"}}
+                {% if form.password2.errors %}
+                {% for error in form.password2.errors %}
+                    <p class="error">{{error}}</p>
+                {% endfor %}
+              `{% endif %}
+          </div>
+		  <div class="form-group new-question-form-submit">
+		  	<button type="submit" class="btn btn-primary">Sign Up</button>
+		  </div>
+		</form>
+	</div>
+  </li>
+  <li class="list-group-item login-message">
+  
+</li>
+ </ul>
+
+{% endblock %} 
