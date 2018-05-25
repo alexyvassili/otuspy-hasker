@@ -543,6 +543,11 @@ body {
   color: #a5acb3;
 }
 
+.avatar-field {
+  border: none;
+  font-size: small;
+}
+
 .form-control-file {
   color: #a5acb3;
 }

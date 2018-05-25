@@ -1,45 +1,83 @@
 {% extends "base.html" %}
 {% block content %}
+{% load addcss %}
  <ul class="list-group main-section">
   <li class="list-group-item profile-title">
     Profile Settings
   </li>
   <li class="list-group-item profile-avatar">
-    <img src="/static/img/avatar.jpg" class="profile-avatar-img">
+    <img src="{{ user.profile.avatar.url }}" class="profile-avatar-img">
   </li>
   <li class="list-group-item profile-form">
-    <form>
+    <form method="post" enctype="multipart/form-data" class="update-profile-form">
+      {% csrf_token %}
   <div class="form-group">
-    <label for="ProfileImage" class="form-profile-img-label">Download your photo.<br />Max size is 2 Mb.</label>
-    <input type="file" class="form-control-file" id="ProfileImage">
-    <a href="#" class="btn btn-outline-danger btn-sm">Delete Photo</a>
+    <label for="{{profile_form.avatar.id_for_label}}" class="form-profile-img-label">Download your photo.<br />Max size is 1 Mb.</label>
+    <br/>
+    {{ profile_form.avatar|addcss:"form-control avatar-field"}}
+
+    {% if profile_form.avatar.errors %}
+      {% for error in profile_form.avatar.errors %}
+          <p class="error">{{error}}</p>
+      {% endfor %}
+    {% endif %}
+
+    <br />
+    {% if user.profile.is_custom_avatar %}
+    <a href="/set_default_avatar/" class="btn btn-outline-danger btn-sm">Delete Photo</a>
+    &nbsp;&nbsp;&nbsp;
+    {% endif %}
+    <button type="submit" class="btn btn-outline-primary btn-sm">Update Photo</button>
   </div>
   <fieldset disabled>
   <div class="form-group profile-form-group">
-      <label class="new-question-form-label" for="disabledTextInput">E-Mail</label>
-      <input type="email" id="disabledEmailInput" class="form-control" value="kit.nik@gmail.com">
+    
+    <label class="new-question-form-label" for="usernameField">Login</label>
+    <input type="email" class="form-control" id="usernameField" value="{{user.username}}">
   </div>
   </fieldset>
   <div class="form-group profile-form-group">
-    <label class="new-question-form-label" for="userProfileFormLogin">Login</label>
-    <input type="text" class="form-control" id="userProfileFormLogin" value="kit.nik">
-  </div>
-  <!-- Короче, ниже скрытое поле - это баг, значение по умолчанию почему-то пропадает из
-  формы на этом месте. Поэтому пришлось вставить пустое скрытое поле. Может csrf token потом
-  сюда зайдёт -->
-  <fieldset disabled>
-  <div class="form-group profile-form-group">
-      <!-- <label class="new-question-form-label" for="disabledTextInput">E-Mail</label> -->
-      <input type="text" id="disabledBugInput" class="form-control d-none" value="">
-  </div>
-  </fieldset>
-  <div class="form-group profile-form-group">
-    <label class="new-question-form-label" for="userProfileFormName">Name</label>
-    <input type="text" class="form-control" id="userProfileFormName" value="Nikita Kuleshov">
+    <label class="new-question-form-label" for="{{user_form.email.id_for_label}}">Email</label>
+    {{ user_form.email|addcss:"form-control"}}
+
+    {% if user_form.email.errors %}
+      {% for error in user_form.email.errors %}
+          <p class="error">{{error}}</p>
+      {% endfor %}
+  {% endif %}
+
   </div>
   <div class="form-group profile-form-group">
-    <label class="new-question-form-label" for="userProfileFormAbout">About</label>
-    <input type="text" class="form-control" id="userProfileFormAbout" value="MMA fighter">
+    <label class="new-question-form-label" for="{{user_form.first_name.id_for_label}}">First Name</label>
+    {{ user_form.first_name|addcss:"form-control"}}
+
+    {% if user_form.first_name.errors %}
+      {% for error in user_form.first_name.errors %}
+          <p class="error">{{error}}</p>
+      {% endfor %}
+  {% endif %}
+
+  </div>
+  <div class="form-group profile-form-group">
+    <label class="new-question-form-label" for="{{user_form.last_name.id_for_label}}">Last Name</label>
+    {{ user_form.last_name|addcss:"form-control"}}
+
+    {% if user_form.last_name.errors %}
+      {% for error in user_form.last_name.errors %}
+          <p class="error">{{error}}</p>
+      {% endfor %}
+  {% endif %}
+
+  </div>
+  <div class="form-group profile-form-group">
+    <label class="new-question-form-label" for="{{profile_form.about.id_for_label}}">About</label>
+    {{ profile_form.about|addcss:"form-control"}}
+  
+  {% if user_form.about.errors %}
+      {% for error in user_form.about.errors %}
+          <p class="error">{{error}}</p>
+      {% endfor %}
+  {% endif %}
   </div>
   <div class="form-group new-question-form-submit">
   <button type="submit" class="btn btn-primary">Update Profile</button>
