@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from questions.utils import crop_square
-from questions.models import Profile
+from questions.models import Profile, Question, Answer, Tag
 
 
 class SignUpForm(UserCreationForm):
@@ -40,7 +40,7 @@ class UserProfileForm(forms.ModelForm):
             # validate content type
             main, sub = avatar.content_type.split('/')
             if not (main == 'image' and sub in ['jpeg', 'pjpeg', 'png']):  # гифки идут нахер!
-                raise forms.ValidationError(_('Please use a JPEG or PNG image.'))
+                raise ValidationError(_('Please use a JPEG or PNG image.'))
 
             # validate file size
             print('Avatar, len', len(avatar)/1024)
@@ -56,3 +56,20 @@ class UserProfileForm(forms.ModelForm):
             pass
 
         return avatar
+
+
+class NewQuestionForm(forms.ModelForm):
+    tags = forms.CharField(required=True, max_length=255)
+
+    class Meta:
+        model = Question
+        fields = ('title', 'content', 'tags',)
+
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        if not tags:
+            raise ValidationError(_('You need type at least one tag'))
+        elif len(tags.split(',')) > 5:
+            raise ValidationError(_('Max 5 tags allowed'))
+
+        return tags

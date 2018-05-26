@@ -11,6 +11,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     about = models.CharField(max_length=255, blank=True, null=True, default=None)
     avatar = models.ImageField(upload_to='users/', default=AVATAR_DEFAULT)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     @property
     def is_custom_avatar(self):
@@ -33,3 +34,37 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Tag(models.Model):
+    tagword = models.CharField(max_length=64, blank=True, null=True)
+
+    def __str__(self):
+        return "{}".format(self.tagword)
+
+
+class Question(models.Model):
+    """заголовок,	содержание,	автор,	дата	создания,	тэги"""
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    content = models.TextField(blank=True, null=True, default=None)
+    tags = models.ManyToManyField(Tag,  verbose_name="list of tags",
+                                  blank=True, default=None)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __str__(self):
+        return "{}".format(self.title[:50])
+
+
+class Answer(models.Model):
+    """содержание,	автор,	дата	написания,	флаг	правильного	ответа"""
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    content = models.TextField(blank=True, null=True, default=None)
+    is_solution = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    def __str__(self):
+        return "{}".format(self.content[:50])

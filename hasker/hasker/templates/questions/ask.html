@@ -1,22 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
+{% load addcss %}
+{% load addplaceholder %}
  <ul class="list-group main-section">
   <li class="list-group-item new-question-title">
     New Question
   </li>
   <li class="list-group-item new-question-form">
-    <form>
+    <form method="post">
+      {% csrf_token %}
+  <fieldset disabled>
+  <div class="form-group d-none">
+    <label class="new-question-form-label" for="{{form.author.id_for_label}}">Author</label>
+    
+  </div>
+  </fieldset>
   <div class="form-group">
-    <label class="new-question-form-label" for="newQuestionFormControlTitle">Title of the Question</label>
-    <input type="text" class="form-control" id="newQuestionFormControlTitle" placeholder="What's you question? Be specific.">
+    <label class="new-question-form-label" for="{{form.title.id_for_label}}">Title of the Question</label>
+    {{ form.title|addplaceholder:"What's you question? Be specific."}}
   </div>
   <div class="form-group">
-    <label class="new-question-form-label" for="newQuestionFormControlTags">Question Tags</label>
-    <input type="text" class="form-control" id="newQuestionFormControlTags" placeholder="At least one tag, max 5 tags, comma separated.">
+    <label class="new-question-form-label" for="{{form.tags.id_for_label}}">Question Tags</label>
+    {{ form.tags|addplaceholder:"At least one tag, max 5 tags, comma separated."}}
+
+  {% if form.tags.errors %}
+    {% for error in form.tags.errors %}
+        <p class="error">{{error}}</p>
+    {% endfor %}
+  {% endif %}
   </div>
   <div class="form-group">
-    <label class="new-question-form-label" for="newQuestionFormControlText">Question Details</label>
-    <textarea class="form-control" id="newQuestionFormControlText" rows="10"></textarea>
+    <label class="new-question-form-label" for="{{form.content.id_for_label}}">Question Details</label>
+    {{ form.content|addcss:"form-control"}}
   </div>
   <div class="form-group new-question-form-submit">
   <button type="submit" class="btn btn-success">Submit Question</button>
