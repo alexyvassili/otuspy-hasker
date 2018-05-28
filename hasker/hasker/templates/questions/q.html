@@ -3,40 +3,32 @@
  <ul class="list-group main-section">
   <li class="list-group-item question-page-li">
     <ul class="list-inline no-dot">
-      <li class="list-inline-item"><img src="/static/img/avatar.jpg" class="question-avatar"></li>
-      <li class="list-inline-item question-user">Ivan Denisov</li>
+      <li class="list-inline-item"><img src="{{ question.author.profile.avatar.url }}" class="question-avatar"></li>
+      <li class="list-inline-item question-user">{{question.author.first_name}}&nbsp;{{question.author.last_name}}</li>
     </ul>
   </li>
   <li class="list-group-item question-page">
     <div class="row">
       <div class="col-md-12 question-page-tag-block">
-        <span class="tag">образование</span>
-        <span class="tag">javascript</span>
-        <span class="tag">python</span>
+        {% for tag in question.tags.all %}
+          <span class="tag">{{tag|upper}}</span>
+        {% endfor %}
       </div>
     </div>
     <div class="row">
       <div class="col-md-12 question-page-title-block">
-        <span class="question-page-title">Как (и возможно ли) дотянуться до Junior JavaScript Developer в кратчайшие сроки?</span>
+        <span class="question-page-title">{{question.title}}</span>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12 question-content">
-    Исходные данные: 30+, есть не-айти вышка и кандидатская (естественные науки). Свободный английский. Москва. С айти раньше пересекалась, но поверхностно: немного Python для работы, чуть-чуть Java для интереса, показать нечего. Несколько месяцев назад я решила переходить в вебдев. Учеба-по-вечерам с моей работой не сдружилась, так что недавно я уволилась, чтобы (почти) полностью переключиться на IT. Финансовая подушка есть, но тонкая.<br/>
-Сейчас ситуация такая. Я более-менее владею HTML, CSS и базовым JavaScript.  Знакома с Git и Sass, чуть-чуть - с node.js и npm. Сделала для знакомых большой (но статичный) сайт с адаптивной версткой, все элементы реализовала сама (без готовых решений, чистый CSS/JS). <br/>
-Теоретически, можно сверстать пару страниц с psd-макетов (показать заодно владение тем же Bootstrap и jQuery?), положить их в портфолио и искать вакансию верстальщика. Но я увольнялась ради JavaScript и очень хотела бы сразу прыгнуть на позицию Junior JavaScript Developer. Вообще мне безумно хочется закопаться в какой-нибудь mean stack, но под него, похоже, нет джуниорских вакансий - и мне очень трудно оценить, какой срок нужно на него заложить. <br/>
-На доучивание у меня примерно месяц (два от силы), правда с почти полным погружением. Возможно ли за это время дотянуться до Junior JavaScript Developer? Что от них хотят? На что делать упор в занятиях: пилить свой проект или проходить курсы? углубляться в "голый" JavaScript или разбираться с frameworks (какую выбрать?) и базами данных? Или вообще хватит умения обращаться с AJAX?<br/>
-Или это всё утопия, а начинать всё равно придётся с позиции верстальщика?<br/>
-Буду благодарна за любые идеи/советы/информацию.<br/><br/><b>Апдейт</b><br/>
-Всем спасибо за мнения, идеи и ссылки! Особо благодарю пессимистов: на вакансии я теперь смотрю другими глазами.<br/>
-Исправляю сбой коммуникации. "Базовый JS" в моей вселенной - это не "вчера увидела, сегодня что-то ковыряю", а "знаю язык, но не делала общественно-значимых проектов". Это как минимум тот самый основной курс learn.javascript.ru, как я теперь (хорошенько там всё перекопав и порешав случайные задачи) понимаю. Надо будет чётче обозначить это в откликах на вакансии, а то и там за "войти-в-айти-за-месяц" примут.<br/>
-В общем, работать придётся как рабу на галерах, на собеседования надо проситься ASAP и, вероятно, работать первое время за еду, но шансы есть. Всем спасибо ещё раз!  
+        {{question.content}}
       </div>
     </div>
     <div class="row">
       <div class="col-md-6 question-created">
         <ul class="list-inline">
-          <li class="list-inline-item">Created 15 may</li>
+          <li class="list-inline-item">Created {{question.created|date:"d M"}}</li>
         </ul>
       </div>
       <div class="col-md-6 question-vote">
@@ -49,29 +41,29 @@
     </div>
   </li>
   <li class="list-group-item answers-title">
-    Answers (11)
+    Answers ({{answers.count}})
   </li>
   <li class="list-group-item answers-section">
+
     <ul class="list-group answers">
+      
+      {% for answer in answers %}
       <li class="list-group-item answer">
           <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"><img src="/static/img/avatar.jpg" class="question-avatar"></div>
-            <div class="col-md-11 answer-user">Ivan Denisov</div>
+            <div class="col-md-1 answer-avatar">
+              <img src="{{ answer.author.profile.avatar.url }}" class="question-avatar">
+            </div>
+            <div class="col-md-11 answer-user">{{answer.author.first_name}}&nbsp;{{answer.author.last_name}}</div>
           </div>
           <div class="row answer-row">
             <div class="col-md-1 answer-avatar"></div>
             <div class="col-md-11 answer-content">
-              1. Писать JS код ежедневно. Ну кроме выходного может. Хотя бы чуть чуть, но надо ежедневно что-то новое делать. Начни (ничего что на ТЫ?) что-то делать свое - плагин какой-нибудь, либо веб приложение.
-              2. Уроки могу посоветовать от Codedojo. (есть на торрентах, если надо адрес кину в ВК). Подписка там 500 р/месяц с доступом на все уроки.
-              3. Надо хорошо освоить базу по JS (ES6 конечно)
-
-              Вот примерные вопросы для собеседования - посмотреть (кроме React конечно)
-              Еще один списочек. Здесь уже набор тестовых заданий. Можешь посмотреть что примерно дают в качестве тестового задания - посмотреть
+              {{answer.content}}
             </div>
           </div>
         <div class="row">
           <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-created">Created 15 may</div>
+          <div class="col-md-11 answer-created">Created {{answer.created|date:"d M h m s T"}}</div>
         </div>
         <div class="row">
           <div class="col-md-1 answer-avatar"></div>
@@ -81,139 +73,19 @@
               <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
               <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
             </div>
+            {% if answer.is_solution %}
             <button type="button" class="btn btn-sm btn-success btn-solution" disabled>
+              
               <i data-feather="check"></i>&nbsp;Marked as solution</button>
-          </div>
-        </div>
-      </li>
-      <li class="list-group-item answer">
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"><img src="/static/img/avatar.jpg" class="question-avatar"></div>
-            <div class="col-md-11 answer-user">Ivan Denisov</div>
-          </div>
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"></div>
-            <div class="col-md-11 answer-content">
-              1. Писать JS код ежедневно. Ну кроме выходного может. Хотя бы чуть чуть, но надо ежедневно что-то новое делать. Начни (ничего что на ТЫ?) что-то делать свое - плагин какой-нибудь, либо веб приложение.
-              2. Уроки могу посоветовать от Codedojo. (есть на торрентах, если надо адрес кину в ВК). Подписка там 500 р/месяц с доступом на все уроки.
-              3. Надо хорошо освоить базу по JS (ES6 конечно)
+            {% else %}
+              <button type="button" class="btn btn-sm btn-outline-success btn-solution">Mark as solution</button>
 
-              Вот примерные вопросы для собеседования - посмотреть (кроме React конечно)
-              Еще один списочек. Здесь уже набор тестовых заданий. Можешь посмотреть что примерно дают в качестве тестового задания - посмотреть
-            </div>
-          </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-created">Created 15 may</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-vote">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-success btn-solution">Mark as solution</button>
+            {% endif %}
           </div>
         </div>
       </li>
-      <li class="list-group-item answer">
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"><img src="/static/img/avatar.jpg" class="question-avatar"></div>
-            <div class="col-md-11 answer-user">Ivan Denisov</div>
-          </div>
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"></div>
-            <div class="col-md-11 answer-content">
-              1. Писать JS код ежедневно. Ну кроме выходного может. Хотя бы чуть чуть, но надо ежедневно что-то новое делать. Начни (ничего что на ТЫ?) что-то делать свое - плагин какой-нибудь, либо веб приложение.
-              2. Уроки могу посоветовать от Codedojo. (есть на торрентах, если надо адрес кину в ВК). Подписка там 500 р/месяц с доступом на все уроки.
-              3. Надо хорошо освоить базу по JS (ES6 конечно)
+      {% endfor %}
 
-              Вот примерные вопросы для собеседования - посмотреть (кроме React конечно)
-              Еще один списочек. Здесь уже набор тестовых заданий. Можешь посмотреть что примерно дают в качестве тестового задания - посмотреть
-            </div>
-          </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-created">Created 15 may</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-vote">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-success btn-solution">Mark as solution</button>
-          </div>
-        </div>
-      </li>
-      <li class="list-group-item answer">
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"><img src="/static/img/avatar.jpg" class="question-avatar"></div>
-            <div class="col-md-11 answer-user">Ivan Denisov</div>
-          </div>
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"></div>
-            <div class="col-md-11 answer-content">
-              1. Писать JS код ежедневно. Ну кроме выходного может. Хотя бы чуть чуть, но надо ежедневно что-то новое делать. Начни (ничего что на ТЫ?) что-то делать свое - плагин какой-нибудь, либо веб приложение.
-              2. Уроки могу посоветовать от Codedojo. (есть на торрентах, если надо адрес кину в ВК). Подписка там 500 р/месяц с доступом на все уроки.
-              3. Надо хорошо освоить базу по JS (ES6 конечно)
-
-              Вот примерные вопросы для собеседования - посмотреть (кроме React конечно)
-              Еще один списочек. Здесь уже набор тестовых заданий. Можешь посмотреть что примерно дают в качестве тестового задания - посмотреть
-            </div>
-          </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-created">Created 15 may</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-vote">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-success btn-solution">Mark as solution</button>
-          </div>
-        </div>
-      </li>
-      <li class="list-group-item answer">
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"><img src="/static/img/avatar.jpg" class="question-avatar"></div>
-            <div class="col-md-11 answer-user">Ivan Denisov</div>
-          </div>
-          <div class="row answer-row">
-            <div class="col-md-1 answer-avatar"></div>
-            <div class="col-md-11 answer-content">
-              1. Писать JS код ежедневно. Ну кроме выходного может. Хотя бы чуть чуть, но надо ежедневно что-то новое делать. Начни (ничего что на ТЫ?) что-то делать свое - плагин какой-нибудь, либо веб приложение.
-              2. Уроки могу посоветовать от Codedojo. (есть на торрентах, если надо адрес кину в ВК). Подписка там 500 р/месяц с доступом на все уроки.
-              3. Надо хорошо освоить базу по JS (ES6 конечно)
-
-              Вот примерные вопросы для собеседования - посмотреть (кроме React конечно)
-              Еще один списочек. Здесь уже набор тестовых заданий. Можешь посмотреть что примерно дают в качестве тестового задания - посмотреть
-            </div>
-          </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-created">Created 15 may</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1 answer-avatar"></div>
-          <div class="col-md-11 answer-vote">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-success btn-solution">Mark as solution</button>
-          </div>
-        </div>
-      </li>
     </ul>
   </li>
   <li class="list-group-item your-answer-title">

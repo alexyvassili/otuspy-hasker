@@ -1,16 +1,20 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm
-from questions.models import Profile, Tag, AVATAR_DEFAULT
+from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 
 
 def index(request):
-    title = 'Home'
-    return render(request, 'questions/index.html', locals())
+    questions = Question.objects.all().prefetch_related('tags')
+    paginator = Paginator(questions, 30)
+    page = request.GET.get('page')
+    questions = paginator.get_page(page)
+    return render(request, 'questions/index.html', {'questions': questions,
+                                                    'title': 'Home', })
 
 
 def new(request):
@@ -18,9 +22,13 @@ def new(request):
     return render(request, 'questions/new.html', locals())
 
 
-def question(request):
-    title = 'Question'
-    return render(request, 'questions/q.html', locals())
+def question(request, uid):
+    question = get_object_or_404(Question, pk=uid)
+    title = question.title
+    answers = Answer.objects.filter(question__id=uid).order_by('is_solution', 'created')
+    return render(request, 'questions/q.html', {'title': title,
+                                                'question': question,
+                                                'answers': answers,})
 
 
 @login_required

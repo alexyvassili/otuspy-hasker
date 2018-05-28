@@ -53,6 +53,7 @@ body {
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  max-width: 230px;
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
@@ -562,4 +563,13 @@ body {
 
 .error {
   color: red;
+}
+
+.question-a:hover {
+  text-decoration: none;
+}
+
+.questions-paginator {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
