@@ -15,6 +15,7 @@ urlpatterns = [
     path('set_default_avatar/', views.set_default_avatar, name='set_default_avatar'),
     path('q/<int:uid>/like/', views.like_question, name='like_question'),
     path('q/<int:uid>/dislike/', views.dislike_question, name='dislike_question'),
-    path('q/<int:quest_uid>/like/<int:ans_uid>/', views.like_answer, name='like_answer'),
-    path('q/<int:quest_uid>/dislike/<int:ans_uid>/', views.dislike_answer, name='dislike_answer'),
+    path('q/answer/<int:ans_uid>/like/', views.like_answer, name='like_answer'),
+    path('q/answer/<int:ans_uid>/dislike/', views.dislike_answer, name='dislike_answer'),
+    path('ajax/tags/push/', views.send_all_tags, name="send_all_tags")
 ]

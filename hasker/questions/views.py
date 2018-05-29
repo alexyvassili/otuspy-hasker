@@ -1,9 +1,12 @@
+import json
+
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.http import HttpResponse
 from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm
 from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 
@@ -14,7 +17,8 @@ def index(request):
     page = request.GET.get('page')
     questions = paginator.get_page(page)
     return render(request, 'questions/index.html', {'questions': questions,
-                                                    'title': 'Home', })
+                                                    'title': 'Home',
+                                                    'trending': _get_trending(),})
 
 
 def new(request):
@@ -23,7 +27,8 @@ def new(request):
     page = request.GET.get('page')
     questions = paginator.get_page(page)
     return render(request, 'questions/index.html', {'questions': questions,
-                                                    'title': 'New Questions', })
+                                                    'title': 'New Questions',
+                                                    'trending': _get_trending(),})
 
 
 def question(request, uid):
@@ -32,7 +37,8 @@ def question(request, uid):
     answers = Answer.objects.filter(question__id=uid).order_by('-is_solution', '-rating')
     return render(request, 'questions/q.html', {'title': title,
                                                 'question': question,
-                                                'answers': answers,})
+                                                'answers': answers,
+                                                'trending': _get_trending(),})
 
 
 @login_required
@@ -54,6 +60,7 @@ def profile(request):
         'user_form': user_form,
         'profile_form': profile_form,
         'title': f'@{request.user.username} Profile',
+        'trending': _get_trending(),
     })
 
 
@@ -75,7 +82,7 @@ def ask(request):
                 pub.tags.add(obj)
             pub.save()
             print(pub.id)
-            return redirect('question')
+            return redirect('question', pub.id)
         else:
             print(form.errors)
     else:
@@ -83,6 +90,7 @@ def ask(request):
     return render(request, 'questions/ask.html', {
         'form': form,
         'title': 'Ask',
+        'trending': _get_trending(),
     })
 
 
@@ -110,6 +118,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form,
                                                         'title': 'Sign Up',
+                                                        'trending': _get_trending(),
                                                         })
 
 @login_required
@@ -129,7 +138,7 @@ def like_question(request, uid):
     post.rating = post.likes.count() - post.dislikes.count()
     post.votes = post.likes.count() + post.dislikes.count()
     post.save()
-    return redirect('question', uid)
+    return HttpResponse(str(post.rating))
 
 
 @login_required
@@ -141,26 +150,40 @@ def dislike_question(request, uid):
     post.rating = post.likes.count() - post.dislikes.count()
     post.votes = post.likes.count() + post.dislikes.count()
     post.save()
-    return redirect('question', uid)
+    return HttpResponse(str(post.rating))
 
 
 @login_required
-def like_answer(request, quest_uid, ans_uid):
+def like_answer(request, ans_uid):
     user = request.user
     post = Answer.objects.get(id=ans_uid)
     post.dislikes.remove(user)
     post.likes.add(user)
     post.rating = post.likes.count() - post.dislikes.count()
     post.save()
-    return redirect('question', quest_uid)
+    return HttpResponse(str(post.rating))
 
 
 @login_required
-def dislike_answer(request, quest_uid, ans_uid):
+def dislike_answer(request, ans_uid):
     user = request.user
     post = Answer.objects.get(id=ans_uid)
     post.likes.remove(user)
     post.dislikes.add(user)
     post.rating = post.likes.count() - post.dislikes.count()
     post.save()
-    return redirect('question', quest_uid)
+    return HttpResponse(str(post.rating))
+
+
+def send_all_tags(request):
+    tags = Tag.objects.all()
+    data = [tag.tagword for tag in tags]
+    data = json.dumps(data)
+    return HttpResponse(data, content_type='application/json')
+
+
+def _get_trending():
+    from datetime import datetime, timedelta
+    last_month = datetime.today() - timedelta(days=30)
+    trending = Question.objects.filter(created__gte=last_month).order_by('-votes')[:15]
+    return trending

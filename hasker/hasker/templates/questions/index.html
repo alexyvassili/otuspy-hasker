@@ -28,7 +28,7 @@
       </div>
       <div class="col-md-2 answers-counter-block">
         <div class="answers-counter">{{ question.answer_set.count }}</div>
-        <div class="answers-counter-text">answers</div>
+        <div class="answers-counter-text">answer{{ question.answer_set.count|pluralize:" ,s" }}</div>
       </div>
     </div>
     <div class="row">

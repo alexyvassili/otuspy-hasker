@@ -33,14 +33,14 @@
       </div>
       <div class="col-md-6 question-vote">
         <div class="btn-group" role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
+          <button type="button" id="{{question.id}}" class="btn btn-sm btn-outline-dark btn-question-dislike"><i data-feather="minus"></i></button>
           {% if question.rating >= 0 %}
-          <div class="btn btn-sm btn-outline-success">
+          <div  id="qrate_{{question.id}}" class="btn btn-sm btn-outline-success rate-area">
           {% else %}
-          <div class="btn btn-sm btn-outline-danger">
+          <div id="qrate_{{question.id}}" class="btn btn-sm btn-outline-danger rate-area">
           {% endif %}
-          <strong>{{question.rating}}</strong></div>
-          <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
+          {{question.rating}}</div>
+          <button type="button" id="{{question.id}}" class="btn btn-sm btn-outline-dark btn-question-like"><i data-feather="plus"></i></button>
         </div>
       </div>
     </div>
@@ -73,15 +73,15 @@
         <div class="row">
           <div class="col-md-1 answer-avatar"></div>
           <div class="col-md-11 answer-vote">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
+            <div class="btn-group" role="group" aria-label="Rating group">
+              <button type="button" id="{{answer.id}}" class="btn btn-sm btn-outline-dark btn-answer-dislike"><i data-feather="minus"></i></button>
               {% if answer.rating >= 0 %}
-              <div class="btn btn-sm btn-outline-success">
+              <div id="arate_{{answer.id}}" class="btn btn-sm btn-outline-success rate-area">
               {% else %}
-              <div class="btn btn-sm btn-outline-danger">
+              <div id="arate_{{answer.id}}" class="btn btn-sm btn-outline-danger rate-area">
               {% endif %}
-              <strong>{{answer.rating}}</strong></div>
-                  <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
+              {{answer.rating}}</div>
+                  <button type="button" id="{{answer.id}}" class="btn btn-sm btn-outline-dark btn-answer-like"><i data-feather="plus"></i></button>
                 </div>
             {% if answer.is_solution %}
             <button type="button" class="btn btn-sm btn-success btn-solution" disabled>
