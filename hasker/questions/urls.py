@@ -7,9 +7,14 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('new', views.new, name='new_questions'),
     path('q/<int:uid>/', views.question, name='question'),
+    path('q/<str:tagword>/', views.tag_search, name='tag_search'),
     path('ask', views.ask, name='ask'),
     path('user', views.profile, name='user_profile'),
     path('search', views.search, name='search'),
     path('signup/', views.signup, name='signup'),
-    path('set_default_avatar/', views.set_default_avatar, name='set_default_avatar')
+    path('set_default_avatar/', views.set_default_avatar, name='set_default_avatar'),
+    path('q/<int:uid>/like/', views.like_question, name='like_question'),
+    path('q/<int:uid>/dislike/', views.dislike_question, name='dislike_question'),
+    path('q/<int:quest_uid>/like/<int:ans_uid>/', views.like_answer, name='like_answer'),
+    path('q/<int:quest_uid>/dislike/<int:ans_uid>/', views.dislike_answer, name='dislike_answer'),
 ]

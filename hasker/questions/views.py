@@ -9,8 +9,8 @@ from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 
 
 def index(request):
-    questions = Question.objects.all().prefetch_related('tags')
-    paginator = Paginator(questions, 30)
+    questions = Question.objects.all().prefetch_related('tags').order_by('-votes')
+    paginator = Paginator(questions, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
     return render(request, 'questions/index.html', {'questions': questions,
@@ -18,14 +18,18 @@ def index(request):
 
 
 def new(request):
-    title = 'New'
-    return render(request, 'questions/new.html', locals())
+    questions = Question.objects.all().prefetch_related('tags').order_by('-created')
+    paginator = Paginator(questions, 20)
+    page = request.GET.get('page')
+    questions = paginator.get_page(page)
+    return render(request, 'questions/index.html', {'questions': questions,
+                                                    'title': 'New Questions', })
 
 
 def question(request, uid):
     question = get_object_or_404(Question, pk=uid)
     title = question.title
-    answers = Answer.objects.filter(question__id=uid).order_by('is_solution', 'created')
+    answers = Answer.objects.filter(question__id=uid).order_by('-is_solution', '-rating')
     return render(request, 'questions/q.html', {'title': title,
                                                 'question': question,
                                                 'answers': answers,})
@@ -70,6 +74,7 @@ def ask(request):
                 obj, create = Tag.objects.get_or_create(tagword=tag)
                 pub.tags.add(obj)
             pub.save()
+            print(pub.id)
             return redirect('question')
         else:
             print(form.errors)
@@ -82,6 +87,11 @@ def ask(request):
 
 
 def search(request):
+    title = 'Search'
+    return render(request, 'questions/search.html', locals())
+
+
+def tag_search(request, tagword):
     title = 'Search'
     return render(request, 'questions/search.html', locals())
 
@@ -108,3 +118,49 @@ def set_default_avatar(request):
     user_profile.avatar = AVATAR_DEFAULT
     user_profile.save()
     return redirect('user_profile')
+
+
+@login_required
+def like_question(request, uid):
+    user = request.user
+    post = Question.objects.get(id=uid)
+    post.dislikes.remove(user)
+    post.likes.add(user)
+    post.rating = post.likes.count() - post.dislikes.count()
+    post.votes = post.likes.count() + post.dislikes.count()
+    post.save()
+    return redirect('question', uid)
+
+
+@login_required
+def dislike_question(request, uid):
+    user = request.user
+    post = Question.objects.get(id=uid)
+    post.likes.remove(user)
+    post.dislikes.add(user)
+    post.rating = post.likes.count() - post.dislikes.count()
+    post.votes = post.likes.count() + post.dislikes.count()
+    post.save()
+    return redirect('question', uid)
+
+
+@login_required
+def like_answer(request, quest_uid, ans_uid):
+    user = request.user
+    post = Answer.objects.get(id=ans_uid)
+    post.dislikes.remove(user)
+    post.likes.add(user)
+    post.rating = post.likes.count() - post.dislikes.count()
+    post.save()
+    return redirect('question', quest_uid)
+
+
+@login_required
+def dislike_answer(request, quest_uid, ans_uid):
+    user = request.user
+    post = Answer.objects.get(id=ans_uid)
+    post.likes.remove(user)
+    post.dislikes.add(user)
+    post.rating = post.likes.count() - post.dislikes.count()
+    post.save()
+    return redirect('question', quest_uid)

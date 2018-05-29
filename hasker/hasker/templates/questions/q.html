@@ -34,7 +34,12 @@
       <div class="col-md-6 question-vote">
         <div class="btn-group" role="group" aria-label="Basic example">
           <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-          <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
+          {% if question.rating >= 0 %}
+          <div class="btn btn-sm btn-outline-success">
+          {% else %}
+          <div class="btn btn-sm btn-outline-danger">
+          {% endif %}
+          <strong>{{question.rating}}</strong></div>
           <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
         </div>
       </div>
@@ -70,9 +75,14 @@
           <div class="col-md-11 answer-vote">
             <div class="btn-group" role="group" aria-label="Basic example">
               <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="minus"></i></button>
-              <button type="button" class="btn btn-sm btn-outline-primary" disabled>145</button>
-              <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
-            </div>
+              {% if answer.rating >= 0 %}
+              <div class="btn btn-sm btn-outline-success">
+              {% else %}
+              <div class="btn btn-sm btn-outline-danger">
+              {% endif %}
+              <strong>{{answer.rating}}</strong></div>
+                  <button type="button" class="btn btn-sm btn-outline-dark"><i data-feather="plus"></i></button>
+                </div>
             {% if answer.is_solution %}
             <button type="button" class="btn btn-sm btn-success btn-solution" disabled>
               

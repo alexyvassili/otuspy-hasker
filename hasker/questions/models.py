@@ -1,7 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 AVATAR_DEFAULT = 'users/avatar.jpg'
@@ -50,6 +50,12 @@ class Question(models.Model):
     content = models.TextField(blank=True, null=True, default=None)
     tags = models.ManyToManyField(Tag,  verbose_name="list of tags",
                                   blank=True, default=None)
+    likes = models.ManyToManyField(User,  verbose_name="q_liked from",
+                                   default=None, related_name="q_liked_from")
+    dislikes = models.ManyToManyField(User, verbose_name="q_disliked from",
+                                      default=None, related_name="q_disliked_from")
+    rating = models.IntegerField(default=0)
+    votes = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
@@ -63,6 +69,11 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True, default=None)
     is_solution = models.BooleanField(default=False)
+    likes = models.ManyToManyField(User, verbose_name="a_liked from",
+                                   default=None, related_name="a_liked_from")
+    dislikes = models.ManyToManyField(User, verbose_name="a_disliked from",
+                                      default=None, related_name="a_disliked_from")
+    rating = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
