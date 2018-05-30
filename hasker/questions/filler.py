@@ -48,6 +48,7 @@ def add_question(quest, user):
     question.save()
     return question
 
+
 def add_answer(answer_text, question, user, is_solution):
     answer = Answer.objects.create(author=user,
                                    question=question,
