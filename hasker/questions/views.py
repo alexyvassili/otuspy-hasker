@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
-from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm
+from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm, NewAnswerForm
 from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 
 
@@ -31,14 +31,29 @@ def new(request):
                                                     'trending': _get_trending(),})
 
 
+@transaction.atomic
 def question(request, uid):
-    question = get_object_or_404(Question, pk=uid)
-    title = question.title
-    answers = Answer.objects.filter(question__id=uid).order_by('-is_solution', '-rating')
-    return render(request, 'questions/q.html', {'title': title,
-                                                'question': question,
-                                                'answers': answers,
-                                                'trending': _get_trending(),})
+    if request.method == 'POST':
+        form = NewAnswerForm(request.POST)
+        if form.is_valid():
+            pub = form.save(commit=False)
+            pub.author = User.objects.get(username=request.user)
+            pub.question = Question.objects.get(pk=uid)
+            pub.save()
+            return redirect('question', uid)
+    else:
+        question = get_object_or_404(Question, pk=uid)
+        title = question.title
+        is_owner = question.author.id == request.user.id
+        # '-rating' change to 'created'
+        answers = Answer.objects.filter(question__id=uid).order_by('-is_solution', 'created')
+        form = NewAnswerForm()
+        return render(request, 'questions/q.html', {'title': title,
+                                                    'question': question,
+                                                    'answers': answers,
+                                                    'is_owner': is_owner,
+                                                    'form': form,
+                                                    'trending': _get_trending(),})
 
 
 @login_required
@@ -187,3 +202,17 @@ def _get_trending():
     last_month = datetime.today() - timedelta(days=30)
     trending = Question.objects.filter(created__gte=last_month).order_by('-votes')[:15]
     return trending
+
+
+@login_required
+def set_answer_as_solution(request, ans_uid):
+    user = request.user
+    post = Answer.objects.get(id=ans_uid)
+    if post.is_solution:
+        return HttpResponse(f"Ne balyisya knopkoj, mudilo!")
+    if post.question.author.id == user.id:
+        post.is_solution = True
+        post.save()
+        return HttpResponse(f"OK. Set answer id {ans_uid} as solution")
+    else:
+        return HttpResponse(f"Error. You are not author of this question! Where are you find this button?")

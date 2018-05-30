@@ -576,3 +576,20 @@ body {
 .rate-area {
   font-weight: 700;
 }
+
+.question-username {
+  color: #a5acb3;
+  font-size: small;
+}
+
+.answer-username {
+  color: #a5acb3;
+  font-size: small;
+  font-weight: 100;
+  padding-left: 5px;
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}

@@ -6,6 +6,9 @@
         <img src="{{ user.profile.avatar.url }}" class="sidebar-avatar">
       </li>
       <li class="nav-item loggedin-li loggedin-name">
+        {{ user.first_name }}&nbsp;{{ user.last_name }}&nbsp;
+      </li>
+      <li class="nav-item loggedin-li loggedin-name">
         @{{ user.get_username }}
       </li>
       <li class="nav-item loggedin-li">

@@ -73,3 +73,10 @@ class NewQuestionForm(forms.ModelForm):
             raise ValidationError(_('Max 5 tags allowed'))
 
         return tags
+
+
+class NewAnswerForm(forms.ModelForm):
+
+    class Meta:
+        model = Answer
+        fields = ('content',)
