@@ -9,8 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.contrib.postgres.search import SearchVector
+
 from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm, NewAnswerForm
 from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
+from questions.utils import send_answer_mail
 
 
 def index(request):
@@ -36,9 +38,12 @@ def new(request):
 def search(request):
     # Question.objects.filter(content__search='Javascript')
     search_query = request.GET.get('q')
+    if search_query.startswith('tag:'):
+        # тег идет после tag: строго без пробела как в гуглопоиске
+        return tag_search(request, search_query[4:])
     searchv = SearchVector('title', 'content')
     searchv.default_alias = 'question_search'
-    found = Question.objects.annotate(search=searchv).filter(search=search_query).order_by('-rating')
+    found = Question.objects.annotate(search=searchv).filter(search=search_query).order_by('-rating', '-created')
     # search = Question.objects.all().prefetch_related('tags').order_by('-created')
     paginator = Paginator(found, 20)
     page = request.GET.get('page')
@@ -53,8 +58,7 @@ def search(request):
 def tag_search(request, tagword):
     searchv = SearchVector('tags')
     searchv.default_alias = 'tag_search'
-    # found = Question.objects.annotate(search=searchv).filter(search=tagword).order_by('-rating')
-    found = Question.objects.filter(tags__tagword__iexact=tagword).order_by('-created')
+    found = Question.objects.filter(tags__tagword__iexact=tagword).order_by('-rating', '-created')
     paginator = Paginator(found, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
@@ -74,6 +78,8 @@ def question(request, uid):
             pub.author = User.objects.get(username=request.user)
             pub.question = Question.objects.get(pk=uid)
             pub.save()
+            send_answer_mail(to=pub.question.author.email, username=pub.question.author.username,
+                             post_id=uid, question_title=pub.question.title)
             return redirect('question', uid)
     else:
         question = get_object_or_404(Question, pk=uid)
