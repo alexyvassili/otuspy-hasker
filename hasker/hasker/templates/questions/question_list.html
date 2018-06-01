@@ -24,7 +24,7 @@
         <ul class="list-inline question-meta">
           <li class="list-inline-item">{{question.author.first_name}}&nbsp;{{question.author.last_name}}</li>
           <li class="list-inline-item">{{question.created|date:"d M"}}</li>
-          <li class="list-inline-item">{{question.votes}} votes</li>
+          <li class="list-inline-item">{{question.votes}} vote{{ question.votes|pluralize:" ,s" }}</li>
         </ul>
       </div>
     </div>

@@ -1,3 +1,4 @@
+{% if trending %}
 <h3 class="trending-h">Trending</h3>  
 <ul class="list-group">
   {% for question in trending %}
@@ -12,12 +13,12 @@
     <div class="row">
       <div class="col-md-12">
         <ul class="list-inline trending-meta">
-          <li class="list-inline-item">{{question.votes}} votes</li>
+          <li class="list-inline-item">{{question.votes}} vote{{ question.votes|pluralize:" ,s" }}</li>
           <li class="list-inline-item">{{ question.answer_set.count }} answer{{ question.answer_set.count|pluralize:" ,s" }}</li>
         </ul>
       </div>
     </div>
   </li>
-  {% endfor %}  
+  {% endfor %}
  </ul>
- 
+{% endif %}
