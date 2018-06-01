@@ -37,7 +37,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Tag(models.Model):
-    tagword = models.CharField(max_length=64, blank=True, null=True)
+    tagword = models.CharField(max_length=64)
 
     def __str__(self):
         return "{}".format(self.tagword)
@@ -46,8 +46,8 @@ class Tag(models.Model):
 class Question(models.Model):
     """заголовок,	содержание,	автор,	дата	создания,	тэги"""
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255, blank=True, null=True)
-    content = models.TextField(blank=True, null=True, default=None)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
     tags = models.ManyToManyField(Tag,  verbose_name="list of tags",
                                   blank=True, default=None)
     likes = models.ManyToManyField(User,  verbose_name="q_liked from",
@@ -67,7 +67,7 @@ class Answer(models.Model):
     """содержание,	автор,	дата	написания,	флаг	правильного	ответа"""
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    content = models.TextField(blank=True, null=True, default=None)
+    content = models.TextField()
     is_solution = models.BooleanField(default=False)
     likes = models.ManyToManyField(User, verbose_name="a_liked from",
                                    default=None, related_name="a_liked_from")
