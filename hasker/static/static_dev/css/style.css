@@ -593,3 +593,7 @@ body {
    outline: none !important;
    box-shadow: none;
 }
+
+.no_objects {
+  padding-top: 30px;
+}

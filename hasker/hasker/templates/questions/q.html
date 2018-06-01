@@ -13,7 +13,7 @@
     <div class="row">
       <div class="col-md-12 question-page-tag-block">
         {% for tag in question.tags.all %}
-          <span class="tag">{{tag|upper}}</span>
+          <span class="tag"><a href="/tag/{{tag|lower}}/">{{tag|upper}}</a></span>
         {% endfor %}
       </div>
     </div>
@@ -131,4 +131,5 @@
   </li>
   {% endif   %}
  </ul>
+ 
 {% endblock %}

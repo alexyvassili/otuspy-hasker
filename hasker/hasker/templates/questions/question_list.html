@@ -1,0 +1,64 @@
+{% for question in questions %}
+ <ul class="list-group main-section">
+  <li class="list-group-item question">
+    <div class="row">
+      <div class="col-md-12 tag-block">
+        {% for tag in question.tags.all %}
+          <span class="tag"><a href="/tag/{{tag|lower}}/">{{tag|upper}}</a></span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 question-title-block">
+        <a class="question-a" href="/q/{{question.id}}/">
+        <span class="question-title">{{question.title}}</span>
+      </a>
+      </div>
+      <div class="col-md-2 answers-counter-block">
+        <div class="answers-counter">{{ question.answer_set.count }}</div>
+        <div class="answers-counter-text">answer{{ question.answer_set.count|pluralize:" ,s" }}</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="list-inline question-meta">
+          <li class="list-inline-item">{{question.author.first_name}}&nbsp;{{question.author.last_name}}</li>
+          <li class="list-inline-item">{{question.created|date:"d M"}}</li>
+          <li class="list-inline-item">{{question.votes}} votes</li>
+        </ul>
+      </div>
+    </div>
+  </li>
+
+  {% endfor %}
+{% if questions %}
+ <nav aria-label="Question navigation">
+  <ul class="pagination justify-content-end questions-paginator">
+    {% if questions.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ questions.previous_page_number }}">
+        {{ questions.previous_page_number }}</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="?page=1" tabindex="-1">&laquo; First</a></li>
+    {% endif %}
+    <li class="page-item active">
+      <a class="page-link" href="#">{{ questions.number }} of 
+        {{ questions.paginator.num_pages }}<span class="sr-only">(current)</span></a>
+    </li>
+    {% if questions.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ questions.next_page_number }}">
+        {{ questions.next_page_number }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ questions.paginator.num_pages }}">Last &raquo;</a></li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="?page={{ questions.paginator.num_pages }}"  tabindex="-1">Last &raquo;</a></li>
+    {% endif %}
+  </ul>
+{% endif %}
+</nav>

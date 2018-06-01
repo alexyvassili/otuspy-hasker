@@ -29,23 +29,7 @@
      {% else %}
         <li class="nav-item loggedin-li">
           <span>&nbsp;</span>
-        <!-- <form>
-          <div class="form-group login-form-group">
-            <label for="exampleInputEmail1" class="login-form-label">Email address</label>
-            <input type="email" class="form-control login-form-input" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-            
-          </div>
-          <div class="form-group login-form-group">
-            <label for="exampleInputPassword1" class="login-form-label">Password</label>
-            <input type="password" class="form-control login-form-input" id="exampleInputPassword1" placeholder="Password">
-          </div>
-          <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-          </div>
-          <button type="submit" class="btn btn-primary btn-sm login-btn"><span data-feather="log-in"></span>
-          Log In</button>
-        </form> -->
+        
         <a class="nav-link active  signup" href="{% url 'login'%}?next={{request.path}}">
           <span data-feather="log-in"></span>
           Log In</a>
@@ -61,7 +45,6 @@
       </li>
      {% endif %} 
     </ul>
-
     <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
       <span>&nbsp;</span>
       <a class="d-flex align-items-center text-muted" href="#">

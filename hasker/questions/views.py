@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
@@ -7,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
+from django.contrib.postgres.search import SearchVector
 from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm, NewAnswerForm
 from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 
@@ -26,9 +28,41 @@ def new(request):
     paginator = Paginator(questions, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
-    return render(request, 'questions/index.html', {'questions': questions,
+    return render(request, 'questions/new.html', {'questions': questions,
                                                     'title': 'New Questions',
                                                     'trending': _get_trending(),})
+
+
+def search(request):
+    # Question.objects.filter(content__search='Javascript')
+    search_query = request.GET.get('q')
+    searchv = SearchVector('title', 'content')
+    searchv.default_alias = 'question_search'
+    found = Question.objects.annotate(search=searchv).filter(search=search_query).order_by('-rating')
+    # search = Question.objects.all().prefetch_related('tags').order_by('-created')
+    paginator = Paginator(found, 20)
+    page = request.GET.get('page')
+    questions = paginator.get_page(page)
+    return render(request, 'questions/search.html', {'questions': questions,
+                                                     'title': f'Search: "{search_query}"',
+                                                     'search_query': search_query,
+                                                     'count': paginator.count,
+                                                     'trending': _get_trending(), })
+
+
+def tag_search(request, tagword):
+    searchv = SearchVector('tags')
+    searchv.default_alias = 'tag_search'
+    # found = Question.objects.annotate(search=searchv).filter(search=tagword).order_by('-rating')
+    found = Question.objects.filter(tags__tagword__iexact=tagword).order_by('-created')
+    paginator = Paginator(found, 20)
+    page = request.GET.get('page')
+    questions = paginator.get_page(page)
+    return render(request, 'questions/tag.html', {'questions': questions,
+                                                  'title': f'Tag: #{tagword}',
+                                                  'tagword': tagword,
+                                                  'count': paginator.count,
+                                                  'trending': _get_trending(), })
 
 
 @transaction.atomic
@@ -107,16 +141,6 @@ def ask(request):
         'title': 'Ask',
         'trending': _get_trending(),
     })
-
-
-def search(request):
-    title = 'Search'
-    return render(request, 'questions/search.html', locals())
-
-
-def tag_search(request, tagword):
-    title = 'Search'
-    return render(request, 'questions/search.html', locals())
 
 
 def signup(request):
@@ -198,7 +222,10 @@ def send_all_tags(request):
 
 
 def _get_trending():
-    from datetime import datetime, timedelta
+    """Чтобы трендинг не дублировал hot questions, он отражает вопросы с наибольшим числом
+    голосов за последний месяц. И в том и в другом случае учитывается количество голоса, а не рейтинг
+    Для еще большего различия в hot questions можно было бы добавлять не по голосам, а по рейтингу.
+    """
     last_month = datetime.today() - timedelta(days=30)
     trending = Question.objects.filter(created__gte=last_month).order_by('-votes')[:15]
     return trending
