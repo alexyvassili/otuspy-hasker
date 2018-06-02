@@ -167,10 +167,7 @@ def configure_postgresql():
 
 
 def configure_nginx():
-    _put_template(
-        'fabdeploy/hasker_nginx',
-        os.path.join('/etc/nginx/sites-available', env.PROJECT_NAME)
-    )
+    sudo('cp /var/www/hasker/fabdeploy/hasker_nginx /etc/nginx/sites-available/hasker')
     sites_enabled_link = os.path.join(
         '/etc/nginx/sites-enabled',
         env.PROJECT_NAME,
@@ -182,20 +179,20 @@ def configure_nginx():
 
 def configure_uwsgi():
     sudo('mkdir -p /etc/uwsgi/sites')
-    sudo('cp fabdeploy/hasker.ini /etc/uwsgi/sites/')
-    sudo('cp fabdeploy/uwsgi.service /etc/systemd/system/')
+    sudo('cp /var/www/hasker/fabdeploy/hasker.ini /etc/uwsgi/sites/')
+    sudo('cp /var/www/hasker/fabdeploy/uwsgi.service /etc/systemd/system/')
     sudo('systemctl enable nginx')
     sudo('systemctl enable uwsgi')
 
 
 def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
-    _run_django_management_command('collectstaic --noinput')
+    _run_django_management_command('collectstatic --noinput')
 
 
 def restart_all():
     sudo('systemctl restart nginx')
-    run('systemctl restart uwsgi')
+    sudo('systemctl restart uwsgi')
 
 
 def _mkdir(path: str, use_sudo=False, chown=False):
@@ -209,7 +206,7 @@ def _mkdir(path: str, use_sudo=False, chown=False):
 
 def _put_template(template_name, remote_path, use_sudo=False):
     upload_template(
-        os.path.join('fab_deploy', template_name),
+        os.path.join('fabdeploy', template_name),
         remote_path,
         context={
             'app_name': env.PROJECT_NAME,
