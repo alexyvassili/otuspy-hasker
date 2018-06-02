@@ -3,14 +3,16 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse
 from django.contrib.postgres.search import SearchVector
 
-from questions.forms import SignUpForm, UserUpdateForm, UserProfileForm, NewQuestionForm, NewAnswerForm
+from questions.forms import (SignUpForm, UserUpdateForm,
+                             UserProfileForm, NewQuestionForm,
+                             NewAnswerForm)
 from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
 from questions.utils import send_answer_mail
 
@@ -43,8 +45,8 @@ def search(request):
         return tag_search(request, search_query[4:])
     searchv = SearchVector('title', 'content')
     searchv.default_alias = 'question_search'
-    found = Question.objects.annotate(search=searchv).filter(search=search_query).order_by('-rating', '-created')
-    # search = Question.objects.all().prefetch_related('tags').order_by('-created')
+    found = Question.objects.annotate(search=searchv).filter(search=search_query)\
+        .order_by('-rating', '-created')
     paginator = Paginator(found, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
@@ -136,7 +138,6 @@ def ask(request):
                 obj, create = Tag.objects.get_or_create(tagword=tag)
                 pub.tags.add(obj)
             pub.save()
-            print(pub.id)
             return redirect('question', pub.id)
         else:
             print(form.errors)

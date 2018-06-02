@@ -43,7 +43,6 @@ class UserProfileForm(forms.ModelForm):
                 raise ValidationError(_('Please use a JPEG or PNG image.'))
 
             # validate file size
-            print('Avatar, len', len(avatar)/1024)
             if len(avatar) > (1024 * 1024):
                 raise ValidationError(_('Avatar file size may not exceed 1M.'))
             avatar.file = crop_square(avatar, sub)

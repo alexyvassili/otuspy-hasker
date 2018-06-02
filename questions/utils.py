@@ -5,11 +5,11 @@ from django.template.loader import render_to_string
 
 from hasker.secrets import HASKER_SERVICE_MAIL
 
+
 def crop_square(image_field, img_type):
     image_file = BytesIO(image_field.read())
     image = Image.open(image_file)
     width, height = image.size  # Get dimensions
-    print('Dimensions', width, height)
     square_len = min(width, height)
     left = 0
     top = 0
