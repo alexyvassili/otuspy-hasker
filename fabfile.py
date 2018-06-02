@@ -17,14 +17,14 @@ env.hosts = ['alexey@192.168.0.138']
 def bootstrap():
     set_env()
     run('uname -a')
-    # prepare_package_system()
-    # prepare_interpreter()
-    # install_system_libs()
-    # create_folders()
-    # get_src()
-    # set_secrets()
-    # create_virtualenv()
-    # install_venv_libs()
+    prepare_package_system()
+    prepare_interpreter()
+    install_system_libs()
+    create_folders()
+    get_src()
+    set_secrets()
+    create_virtualenv()
+    install_venv_libs()
     configure_postgresql()
     # configure_nginx()
     # configure_uwsgi()
@@ -37,6 +37,7 @@ def set_env():
     env.BASE_PATH = '/var/www'
     env.VENV_PATH = '/var/pyvenvs'
     env.PROJECT_NAME = 'hasker'
+    env.PROJECT_DATABASE = 'hasker_db'
     env.REMOTE_PROJECT_PATH = os.path.join(env.BASE_PATH, env.PROJECT_NAME)
     env.REMOTE_VENV_PATH = os.path.join(env.VENV_PATH,
                                         env.PROJECT_NAME)
@@ -122,11 +123,16 @@ def configure_postgresql():
         context={
             'DB_USER': DB_USER,
             'DB_PASSWORD': DB_PASSWORD,
-        }
+            'DB_NAME': env.PROJECT_DATABASE,
+        },
+        use_jinja=True
     )
+    run(f"sudo -u postgres psql -tc \"SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '{DB_USER}'\" | "
+        f"grep -q 1 || sudo -u postgres psql -c \"CREATE USER {DB_USER} WITH PASSWORD '{DB_PASSWORD}'\"")
+    run(f'cd {env.REMOTE_PROJECT_PATH}; sudo -u postgres psql -f fabdeploy/setup_db.sql')
+    run(f"sudo -u postgres psql -tc \"SELECT 1 FROM pg_database WHERE datname = '{env.PROJECT_DATABASE}'\" | "
+        f"grep -q 1 || sudo -u postgres psql -c \"CREATE DATABASE {env.PROJECT_DATABASE} OWNER {DB_USER}\"")
     # sudo('systemctl start postgresql')
-    # cd(env.REMOTE_PROJECT_PATH)
-    # run(f'sudo -u postgres psql -f fabdeploy/setup_db.sql -v user={DB_USER} -v pwd={DB_PASSWORD}')
 
 
 def configure_nginx():
