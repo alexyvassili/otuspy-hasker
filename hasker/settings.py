@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['alexyvassili.me', '127.0.0.1']
+ALLOWED_HOSTS = ['alexyvassili.me', '192.168.0.138', '127.0.0.1', 'hasker.com', 'www.hasker.com']
 
 
 # Application definition
