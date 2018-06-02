@@ -17,14 +17,14 @@ env.hosts = ['alexey@192.168.0.138']
 def bootstrap():
     set_env()
     run('uname -a')
-    prepare_package_system()
-    prepare_interpreter()
-    install_system_libs()
-    create_folders()
-    get_src()
-    set_secrets()
-    create_virtualenv()
-    install_venv_libs()
+    # prepare_package_system()
+    # prepare_interpreter()
+    # install_system_libs()
+    # create_folders()
+    # get_src()
+    # set_secrets()
+    # create_virtualenv()
+    # install_venv_libs()
     configure_postgresql()
     # configure_nginx()
     # configure_uwsgi()
@@ -117,16 +117,16 @@ def install_venv_libs():
 
 def configure_postgresql():
     upload_template(
-        os.path.join('./fabdeploy', 'setup_db.sql.template'),
+        os.path.join('fabdeploy', 'setup_db.sql'),
         os.path.join(env.REMOTE_PROJECT_PATH, 'fabdeploy'),
         context={
             'DB_USER': DB_USER,
             'DB_PASSWORD': DB_PASSWORD,
         }
     )
-    sudo('systemctl start postgresql')
-    cd(env.REMOTE_PROJECT_PATH)
-    # run('sudo -u postgres psql -f fab_deploy/setup_db.sql -v user=${HASKER_DB_USER} -v pwd=${HASKER_DB_PASSWORD}')
+    # sudo('systemctl start postgresql')
+    # cd(env.REMOTE_PROJECT_PATH)
+    # run(f'sudo -u postgres psql -f fabdeploy/setup_db.sql -v user={DB_USER} -v pwd={DB_PASSWORD}')
 
 
 def configure_nginx():
