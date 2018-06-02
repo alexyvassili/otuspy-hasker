@@ -5,7 +5,7 @@ from fabric.state import env
 from fabric.api import cd, run, sudo, settings
 from fabric.contrib.files import exists, upload_template
 
-# from hasker.secrets import
+from hasker.secrets import DB_PASSWORD, DB_USER
 
 
 USER = 'alexey'
@@ -22,8 +22,10 @@ def bootstrap():
     install_system_libs()
     create_folders()
     get_src()
+    set_secrets()
     create_virtualenv()
     install_venv_libs()
+    configure_postgresql()
     # configure_nginx()
     # configure_uwsgi()
     # run_django_postbootstrap_commands()
@@ -68,9 +70,9 @@ def prepare_interpreter():
             run('wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz -O /tmp/Python-3.6.5.tgz')
             run('tar xvf Python-3.6.5.tgz -C /tmp/')
             cd('/tmp/Python-3.6.5')
-            run('/tmp/Python-3.6.5/configure --enable-optimizations --with-ensurepip=install')
-            run('make -j8')
-            sudo('make altinstall')
+            run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-optimizations --with-ensurepip=install')
+            run('cd /tmp/Python-3.6.5; make -j8')
+            sudo('cd /tmp/Python-3.6.5; make altinstall')
         elif need_compile.lower() == 'n':
             print('OK, exiting')
             sys.exit(1)
@@ -90,7 +92,15 @@ def create_folders():
 def get_src():
     if not exists(os.path.join(env.REMOTE_PROJECT_PATH, '.git')):
         run(f'git clone {env.GIT_REPO_PATH} {env.REMOTE_PROJECT_PATH}')
-    cd('env.REMOTE_PROJECT_PATH')
+    else:
+        run(f'cd {env.REMOTE_PROJECT_PATH}; git pull')
+
+
+def set_secrets():
+    upload_template(
+        os.path.join(env.PROJECT_NAME, 'secrets.py'),
+        os.path.join(env.REMOTE_PROJECT_PATH, env.PROJECT_NAME)
+    )
 
 
 def create_virtualenv():
@@ -103,6 +113,20 @@ def create_virtualenv():
 def install_venv_libs():
     requirements_txt = os.path.join(env.REMOTE_PROJECT_PATH, 'requirements.txt')
     run(f'{env.VENV_REMOTE_PYTHON_PATH} -m pip install -r {requirements_txt}')
+
+
+def configure_postgresql():
+    upload_template(
+        os.path.join('./fabdeploy', 'setup_db.sql.template'),
+        os.path.join(env.REMOTE_PROJECT_PATH, 'fabdeploy'),
+        context={
+            'DB_USER': DB_USER,
+            'DB_PASSWORD': DB_PASSWORD,
+        }
+    )
+    sudo('systemctl start postgresql')
+    cd(env.REMOTE_PROJECT_PATH)
+    # run('sudo -u postgres psql -f fab_deploy/setup_db.sql -v user=${HASKER_DB_USER} -v pwd=${HASKER_DB_PASSWORD}')
 
 
 def configure_nginx():
