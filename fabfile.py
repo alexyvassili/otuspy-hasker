@@ -1,3 +1,16 @@
+"""
+    This is fabfile for deploying hasker on debian stretch on custom python 3.6.5
+    You can manually install python3.6 to /usr/local/bin e.g. from Anaconda distribution
+    So, the you need run
+    $ sudo apt-get install uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev
+    $ export PYTHON=python3.6
+    $ uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"
+    $ sudo mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so
+    $ sudo chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so
+    (see http://www.paulox.net/2017/04/04/how-to-use-uwsgi-with-python3-6-in-ubuntu/)
+    if you hav an error about recompile with -fPIC flag - just remove your python3.6:
+    this script will install and compile python3.6 and wsgi plugin automatically
+"""
 import os
 import sys
 
@@ -26,10 +39,10 @@ def bootstrap():
     create_virtualenv()
     install_venv_libs()
     configure_postgresql()
-    # configure_nginx()
-    # configure_uwsgi()
-    # run_django_postbootstrap_commands()
-    # restart_all()
+    configure_nginx()
+    configure_uwsgi()
+    run_django_postbootstrap_commands()
+    restart_all()
 
 
 def set_env():
@@ -71,14 +84,30 @@ def prepare_interpreter():
             run('wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz -O /tmp/Python-3.6.5.tgz')
             run('tar xvf Python-3.6.5.tgz -C /tmp/')
             cd('/tmp/Python-3.6.5')
-            run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-optimizations --with-ensurepip=install')
+            run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-shared --enable-optimizations --with-ensurepip=install')
             run('cd /tmp/Python-3.6.5; make -j8')
             sudo('cd /tmp/Python-3.6.5; make altinstall')
+            prepare_uwsgi()
         elif need_compile.lower() == 'n':
             print('OK, exiting')
             sys.exit(1)
         else:
             prepare_interpreter()
+
+
+def prepare_uwsgi():
+    sudo('aptitude install uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev')
+    run('export PYTHON=python3.6')
+    run('uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"')
+    sudo('mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so')
+    sudo('chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so')
+    # you can verify correct uwsgi and django installation by command
+    # (after run django postinstall commands)
+    # $ source /var/pyvenvs/hasker/bin/activate
+    # $ python manage.py runserver
+    # and if it's run ok, then
+    # uwsgi --plugins http,python36 --http :8080 --virtualenv /var/pyvenvs/hasker/ \
+    # --chdir /var/www/hasker/ -w hasker.wsgi
 
 
 def install_system_libs():
@@ -127,17 +156,19 @@ def configure_postgresql():
         },
         use_jinja=True
     )
+    sudo('systemctl start postgresql')
+    # Create db_user if not exists
     run(f"sudo -u postgres psql -tc \"SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '{DB_USER}'\" | "
         f"grep -q 1 || sudo -u postgres psql -c \"CREATE USER {DB_USER} WITH PASSWORD '{DB_PASSWORD}'\"")
     run(f'cd {env.REMOTE_PROJECT_PATH}; sudo -u postgres psql -f fabdeploy/setup_db.sql')
+    # Create database if not exists
     run(f"sudo -u postgres psql -tc \"SELECT 1 FROM pg_database WHERE datname = '{env.PROJECT_DATABASE}'\" | "
         f"grep -q 1 || sudo -u postgres psql -c \"CREATE DATABASE {env.PROJECT_DATABASE} OWNER {DB_USER}\"")
-    # sudo('systemctl start postgresql')
 
 
 def configure_nginx():
     _put_template(
-        'nginx.conf',
+        'fabdeploy/hasker_nginx',
         os.path.join('/etc/nginx/sites-available', env.PROJECT_NAME)
     )
     sites_enabled_link = os.path.join(
@@ -150,7 +181,11 @@ def configure_nginx():
 
 
 def configure_uwsgi():
-    pass
+    sudo('mkdir -p /etc/uwsgi/sites')
+    sudo('cp fabdeploy/hasker.ini /etc/uwsgi/sites/')
+    sudo('cp fabdeploy/uwsgi.service /etc/systemd/system/')
+    sudo('systemctl enable nginx')
+    sudo('systemctl enable uwsgi')
 
 
 def run_django_postbootstrap_commands():
@@ -184,9 +219,11 @@ def _put_template(template_name, remote_path, use_sudo=False):
 
 
 def _run_django_management_command(command):
-    run('DJANGO_CONFIGURATION=%s %s %s %s' % (
-        env.DJANGO_CONFIGURATION,
-        env.VENV_REMOTE_PYTHON_PATH,
-        os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py'),
-        command,
-    ))
+    # run('DJANGO_CONFIGURATION=%s %s %s %s' % (
+    #     env.DJANGO_CONFIGURATION,
+    #     env.VENV_REMOTE_PYTHON_PATH,
+    #     os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py'),
+    #     command,
+    # ))
+    # just e.g. python manage.py migrate
+    run(f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py')} {command}")

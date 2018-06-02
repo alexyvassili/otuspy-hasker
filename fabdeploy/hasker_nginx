@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name hasker.com www.hasker.com;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        alias /var/www/hasker/static/static_prod/;
+    }
+
+    location /media/ {
+       root /var/www/hasker/static/;
+    }
+
+    location / {
+        include         uwsgi_params;
+        uwsgi_pass      unix:/var/run/uwsgi/hasker.sock;
+    }
+}
