@@ -2,9 +2,7 @@ import os
 import django
 from faker import Faker
 import random
-from hasker.secrets import TEST_USERS_PASS
 
-from questions.toster import get_hundred_questions
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hasker.settings")
 django.setup()
@@ -12,6 +10,8 @@ fake = Faker()
 
 
 from django.contrib.auth.models import User
+from secrets import TEST_USERS_PASS
+from questions.toster import get_hundred_questions
 
 
 def fill_users():
