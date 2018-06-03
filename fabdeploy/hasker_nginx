@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name hasker.com www.hasker.com;
+    server_name hasker.staging.com www.hasker.staging.com;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
