@@ -18,7 +18,7 @@ from fabric.state import env
 from fabric.api import cd, run, sudo, settings
 from fabric.contrib.files import exists, upload_template
 
-from hasker.secrets import DB_PASSWORD, DB_USER
+from hasker.secrets import DB_PASSWORD, DB_USER, SUPERUSER, SUPERUSER_MAIL, SUPERUSER_PASS
 
 
 USER = 'alexey'
@@ -57,6 +57,8 @@ def bootstrap():
     configure_uwsgi()
     input('run_django_postbootstrap_commands')
     run_django_postbootstrap_commands()
+    input('demo_data')
+    create_demo_data()
     input('restart_all')
     restart_all()
 
@@ -100,7 +102,8 @@ def prepare_interpreter():
             run('wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz -O /tmp/Python-3.6.5.tgz')
             run('tar xvf /tmp/Python-3.6.5.tgz -C /tmp/')
             cd('/tmp/Python-3.6.5')
-            run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-shared --enable-optimizations --with-ensurepip=install')
+            #  --enable-shared скорее всего больше не нужно
+            run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-optimizations --with-ensurepip=install')
             run('cd /tmp/Python-3.6.5; make -j8')
             sudo('cd /tmp/Python-3.6.5; make altinstall')
         elif need_compile.lower() == 'n':
@@ -127,6 +130,9 @@ def prepare_uwsgi():
     # and if it's run ok, then
     # uwsgi --plugins http,python36 --http :8080 --virtualenv /var/pyvenvs/hasker/ \
     # --chdir /var/www/hasker/ -w hasker.wsgi
+
+    # ldconfig need if python not found his libraries:
+    # sudo('ldconfig')
     sudo('/usr/local/bin/pip3.6 install uwsgi')
 
 
@@ -208,11 +214,20 @@ def configure_uwsgi():
 def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
     _run_django_management_command('collectstatic --noinput')
+    _run_django_management_command(f'shell -c "from django.contrib.auth.models import User; '
+                                   f'exists = bool(User.objects.filter(username={SUPERUSER})); '
+                                   f'User.objects.create_superuser'
+                                   f'(\'{SUPERUSER}\', \'{SUPERUSER_MAIL}\', \'{SUPERUSER_PASS}\') '
+                                   f'if not exists else None;" ')
 
 
 def restart_all():
     sudo('systemctl restart nginx')
     sudo('systemctl restart uwsgi')
+
+
+def create_demo_data():
+    run(f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'questions', 'filler.py')}")
 
 
 def _mkdir(path: str, use_sudo=False, chown=False):

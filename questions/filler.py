@@ -10,6 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hasker.settings")
 django.setup()
 fake = Faker()
 
+
 from django.contrib.auth.models import User
 
 
@@ -94,11 +95,17 @@ def fill_with_likes(Post_model, max_rate):
         post.rating = post.likes.count() - post.dislikes.count()
         post.save()
 
-# fill_users()
-# fill_with_texts()
-# fill_with_likes(Question, 200)
-# fill_with_likes(Answer, 100)
-posts = Question.objects.all()
-for post in posts:
-    post.votes = post.likes.count() + post.dislikes.count()
-    post.save()
+
+def fill_all():
+    fill_users()
+    fill_with_texts()
+    fill_with_likes(Question, 200)
+    fill_with_likes(Answer, 100)
+    posts = Question.objects.all()
+    for post in posts:
+        post.votes = post.likes.count() + post.dislikes.count()
+        post.save()
+
+
+# if __name__ == "__main__":
+#     fill_all()
