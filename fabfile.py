@@ -30,21 +30,19 @@ env.hosts = ['alexey@192.168.0.138']
 def bootstrap():
     set_env()
     run('uname -a')
-    prepare_package_system()
-    prepare_interpreter()
-    prepare_uwsgi()
-    install_system_libs()
-    create_folders()
+    # prepare_package_system()
+    # prepare_interpreter()
+    # prepare_uwsgi()
+    # install_system_libs()
+    # create_folders()
     get_src()
     set_secrets()
-    create_virtualenv()
-    install_venv_libs()
-    configure_postgresql()
-    configure_nginx()
-    configure_uwsgi()
-    input('run_django_postbootstrap_commands')
-    run_django_postbootstrap_commands()
-    input('demo_data')
+    # create_virtualenv()
+    # install_venv_libs()
+    # configure_postgresql()
+    # configure_nginx()
+    # configure_uwsgi()
+    # run_django_postbootstrap_commands()
     create_demo_data()
     input('restart_all')
     restart_all()
@@ -217,7 +215,7 @@ def restart_all():
 def create_demo_data():
     # run(f"cd {env.REMOTE_PROJECT_PATH}; "
     #     f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'questions', 'filler.py')}")
-    run(f"{env.VENV_REMOTE_PYTHON_PATH} manage.py create_demo_data")
+    _run_django_management_command("create_demo_data")
 
 
 def _mkdir(path: str, use_sudo=False, chown=False):

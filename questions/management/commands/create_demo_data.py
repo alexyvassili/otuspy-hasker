@@ -107,5 +107,4 @@ class Command(BaseCommand):
     help = "create demodata in your db from toster.ru"
 
     def handle(self, **options):
-        print("DEMO DATA")
-        # fill_all()
+        fill_all()
