@@ -201,6 +201,7 @@ def configure_uwsgi():
 def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
     _run_django_management_command('collectstatic --noinput')
+    # Create superuser if not exists
     _run_django_management_command(f'shell -c "from django.contrib.auth.models import User; '
                                    f'exists = bool(User.objects.filter(username=\'{SUPERUSER}\')); '
                                    f'User.objects.create_superuser'
@@ -214,7 +215,9 @@ def restart_all():
 
 
 def create_demo_data():
-    run(f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'questions', 'filler.py')}")
+    # run(f"cd {env.REMOTE_PROJECT_PATH}; "
+    #     f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'questions', 'filler.py')}")
+    run(f"{env.VENV_REMOTE_PYTHON_PATH} manage.py create_demo_data")
 
 
 def _mkdir(path: str, use_sudo=False, chown=False):
