@@ -1,15 +1,7 @@
 """
     This is fabfile for deploying hasker on debian stretch on custom python 3.6.5
     You can manually install python3.6 to /usr/local/bin e.g. from Anaconda distribution
-    So, the you need run
-    $ sudo apt-get install uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev
-    $ export PYTHON=python3.6
-    $ uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"
-    $ sudo mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so
-    $ sudo chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so
-    (see http://www.paulox.net/2017/04/04/how-to-use-uwsgi-with-python3-6-in-ubuntu/)
-    if you hav an error about recompile with -fPIC flag - just remove your python3.6:
-    this script will install and compile python3.6 and wsgi plugin automatically
+    or this script will install and compile python3.6 and wsgi plugin automatically
 """
 import os
 import sys
@@ -43,7 +35,6 @@ def bootstrap():
     configure_nginx()
     configure_uwsgi()
     run_django_postbootstrap_commands()
-    # create_demo_data()
     restart_all()
 
 
@@ -54,7 +45,6 @@ def deploy():
     set_secrets()
     install_venv_libs()
     run_django_postbootstrap_commands()
-    # create_demo_data()
     restart_all()
 
 
@@ -97,7 +87,7 @@ def prepare_interpreter():
             run('wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz -O /tmp/Python-3.6.5.tgz')
             run('tar xvf /tmp/Python-3.6.5.tgz -C /tmp/')
             cd('/tmp/Python-3.6.5')
-            #  --enable-shared скорее всего больше не нужно
+            #  --enable-shared if you want use system uwsgi (but you don't want this!)
             run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-optimizations --with-ensurepip=install')
             run('cd /tmp/Python-3.6.5; make -j8')
             sudo('cd /tmp/Python-3.6.5; make altinstall')
@@ -109,24 +99,28 @@ def prepare_interpreter():
 
 
 def prepare_uwsgi():
-    pass
+    """you can verify correct uwsgi and django installation by command
+        (after run django postinstall commands)
+        $ source /var/pyvenvs/hasker/bin/activate
+        $ python manage.py runserver
+        and if it's run ok, then
+        uwsgi --http :8080 --virtualenv /var/pyvenvs/hasker/ \
+             --chdir /var/www/hasker/ -w hasker.wsgi
+        if not, try:
+        uwsgi --plugins http,python36 --http :8080 --virtualenv /var/pyvenvs/hasker/ \
+             --chdir /var/www/hasker/ -w hasker.wsgi
+    """
+
+    # you can install system uwsgi, but it is not worked with python3.6
+    # you need compile python with --enable-shared parameter and
+    # compile uwsgi plugin:
     # sudo('aptitude install python3 python-dev python3-dev uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev')
     # run('export PYTHON=python3.6')
     # if not exists('/usr/lib/uwsgi/plugins/python36_plugin.so'):
     #     run('uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"')
     #     sudo('mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so')
     #     sudo('chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so')
-
-
-    # you can verify correct uwsgi and django installation by command
-    # (after run django postinstall commands)
-    # $ source /var/pyvenvs/hasker/bin/activate
-    # $ python manage.py runserver
-    # and if it's run ok, then
-    # uwsgi --plugins http,python36 --http :8080 --virtualenv /var/pyvenvs/hasker/ \
-    # --chdir /var/www/hasker/ -w hasker.wsgi
-
-    # ldconfig need if python not found his libraries:
+    # if python compiled with --enable-shared it can't found his own libraries, run:
     # sudo('ldconfig')
     sudo('/usr/local/bin/pip3.6 install uwsgi')
 
@@ -223,8 +217,7 @@ def restart_all():
 
 
 def create_demo_data():
-    # run(f"cd {env.REMOTE_PROJECT_PATH}; "
-    #     f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'questions', 'filler.py')}")
+    set_env()
     _run_django_management_command("create_demo_data")
 
 
@@ -255,5 +248,5 @@ def _run_django_management_command(command):
     #     os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py'),
     #     command,
     # ))
-    # just e.g. python manage.py migrate
+    # line below means just e.g. python manage.py migrate
     run(f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py')} {command}")
