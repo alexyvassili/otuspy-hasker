@@ -11,6 +11,8 @@ Fabric3==1.14.post1
 Faker==0.8.15
 idna==2.6
 invoke==1.0.0
+Jinja2==2.10
+MarkupSafe==1.0
 paramiko==2.4.1
 Pillow==5.1.0
 psycopg2-binary==2.7.4
