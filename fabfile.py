@@ -28,20 +28,36 @@ env.hosts = ['alexey@192.168.0.138']
 
 
 def bootstrap():
+    input('setenv')
     set_env()
     run('uname -a')
+    input('prepare_package_system')
     prepare_package_system()
+    input('prepare_interpreter')
     prepare_interpreter()
+    input('prepare_uwsgi')
+    prepare_uwsgi()
+    input('install_system_libs')
     install_system_libs()
+    input('create_folders')
     create_folders()
+    input('get_src')
     get_src()
+    input('set_secrets')
     set_secrets()
+    input('create_virtualenv')
     create_virtualenv()
+    input('install_venv_libs')
     install_venv_libs()
+    input('configure_postgresql')
     configure_postgresql()
+    input('configure_nginx')
     configure_nginx()
+    input('configure_uwsgi')
     configure_uwsgi()
+    input('run_django_postbootstrap_commands')
     run_django_postbootstrap_commands()
+    input('restart_all')
     restart_all()
 
 
@@ -82,12 +98,11 @@ def prepare_interpreter():
             if exists('/tmp/Python-3.6.5.tgz'):
                 run('rm /tmp/Python-3.6.5.tgz')
             run('wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz -O /tmp/Python-3.6.5.tgz')
-            run('tar xvf Python-3.6.5.tgz -C /tmp/')
+            run('tar xvf /tmp/Python-3.6.5.tgz -C /tmp/')
             cd('/tmp/Python-3.6.5')
             run('cd /tmp/Python-3.6.5; /tmp/Python-3.6.5/configure --enable-shared --enable-optimizations --with-ensurepip=install')
             run('cd /tmp/Python-3.6.5; make -j8')
             sudo('cd /tmp/Python-3.6.5; make altinstall')
-            prepare_uwsgi()
         elif need_compile.lower() == 'n':
             print('OK, exiting')
             sys.exit(1)
@@ -96,11 +111,15 @@ def prepare_interpreter():
 
 
 def prepare_uwsgi():
-    sudo('aptitude install uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev')
-    run('export PYTHON=python3.6')
-    run('uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"')
-    sudo('mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so')
-    sudo('chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so')
+    pass
+    # sudo('aptitude install python3 python-dev python3-dev uwsgi uwsgi-src uuid-dev libcap-dev libpcre3-dev')
+    # run('export PYTHON=python3.6')
+    # if not exists('/usr/lib/uwsgi/plugins/python36_plugin.so'):
+    #     run('uwsgi --build-plugin "/usr/src/uwsgi/plugins/python python36"')
+    #     sudo('mv python36_plugin.so /usr/lib/uwsgi/plugins/python36_plugin.so')
+    #     sudo('chmod 644 /usr/lib/uwsgi/plugins/python36_plugin.so')
+
+
     # you can verify correct uwsgi and django installation by command
     # (after run django postinstall commands)
     # $ source /var/pyvenvs/hasker/bin/activate
@@ -108,6 +127,7 @@ def prepare_uwsgi():
     # and if it's run ok, then
     # uwsgi --plugins http,python36 --http :8080 --virtualenv /var/pyvenvs/hasker/ \
     # --chdir /var/www/hasker/ -w hasker.wsgi
+    sudo('/usr/local/bin/pip3.6 install uwsgi')
 
 
 def install_system_libs():
@@ -174,7 +194,7 @@ def configure_nginx():
     )
     if not exists(sites_enabled_link):
         available_link_path = os.path.join('/etc/nginx/sites-available', env.PROJECT_NAME)
-        sudo(f'ln -ls {available_link_path} {sites_enabled_link}')
+        sudo(f'ln -s {available_link_path} {sites_enabled_link}')
 
 
 def configure_uwsgi():
