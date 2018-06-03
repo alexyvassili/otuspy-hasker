@@ -28,32 +28,19 @@ env.hosts = ['alexey@192.168.0.138']
 
 
 def bootstrap():
-    input('setenv')
     set_env()
     run('uname -a')
-    input('prepare_package_system')
     prepare_package_system()
-    input('prepare_interpreter')
     prepare_interpreter()
-    input('prepare_uwsgi')
     prepare_uwsgi()
-    input('install_system_libs')
     install_system_libs()
-    input('create_folders')
     create_folders()
-    input('get_src')
     get_src()
-    input('set_secrets')
     set_secrets()
-    input('create_virtualenv')
     create_virtualenv()
-    input('install_venv_libs')
     install_venv_libs()
-    input('configure_postgresql')
     configure_postgresql()
-    input('configure_nginx')
     configure_nginx()
-    input('configure_uwsgi')
     configure_uwsgi()
     input('run_django_postbootstrap_commands')
     run_django_postbootstrap_commands()
@@ -215,7 +202,7 @@ def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
     _run_django_management_command('collectstatic --noinput')
     _run_django_management_command(f'shell -c "from django.contrib.auth.models import User; '
-                                   f'exists = bool(User.objects.filter(username={SUPERUSER})); '
+                                   f'exists = bool(User.objects.filter(username=\'{SUPERUSER}\')); '
                                    f'User.objects.create_superuser'
                                    f'(\'{SUPERUSER}\', \'{SUPERUSER_MAIL}\', \'{SUPERUSER_PASS}\') '
                                    f'if not exists else None;" ')

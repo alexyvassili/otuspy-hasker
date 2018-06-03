@@ -2,7 +2,7 @@ import os
 import django
 from faker import Faker
 import random
-from secrets import TEST_USERS_PASS
+from hasker.secrets import TEST_USERS_PASS
 
 from questions.toster import get_hundred_questions
 
