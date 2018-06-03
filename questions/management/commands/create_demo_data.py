@@ -93,10 +93,14 @@ def fill_with_likes(Post_model, max_rate):
 
 
 def fill_all():
+    print('Creating users...')
     fill_users()
+    print("Uploading Questions and answers...")
     fill_with_texts()
+    print('Setting likes...')
     fill_with_likes(Question, 200)
     fill_with_likes(Answer, 100)
+    print('Updating ratings...')
     posts = Question.objects.all()
     for post in posts:
         post.votes = post.likes.count() + post.dislikes.count()

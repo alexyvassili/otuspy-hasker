@@ -70,6 +70,7 @@ def get_q_urls(questions_page_url):
 
 
 def get_hundred_questions():
+    print('SCRAPING TOSTER!')
     urls = get_q_urls(URL)
     for i in range(2, 6):
         urls += get_q_urls(f'{URL}?page={i}')
