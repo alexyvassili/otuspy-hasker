@@ -16,8 +16,8 @@ from hasker.secrets import DB_PASSWORD, DB_USER, SUPERUSER, SUPERUSER_MAIL, SUPE
 USER = 'alexey'
 HOST = 'alexyvassili.me'
 
-env.hosts = ['alexey@staging.me']
-# env.hosts = ['alexey@alexyvassili.me']
+# env.hosts = ['alexey@staging.me']
+env.hosts = ['alexey@alexyvassili.me']
 
 
 def bootstrap():
@@ -85,9 +85,9 @@ def prepare_package_system():
     if not exists('/etc/apt/sources.list.old'):
         sudo('mv /etc/apt/sources.list /etc/apt/sources.list.old')
         upload_template('fabdeploy/sources.list', '/etc/apt/',use_sudo=True)
-    # sudo('apt-get update && apt-get upgrade')
+    sudo('apt-get update && apt-get upgrade')
     sudo('apt-get install -y aptitude')
-    sudo('aptitude install -y mc vim')
+    sudo('aptitude install -y mc vim git')
 
 
 def prepare_interpreter():
