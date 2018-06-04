@@ -26,7 +26,7 @@ SECRET_KEY = SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['alexyvassili.me', '192.168.0.138', '127.0.0.1', 'hasker.staging.com', 'www.hasker.staging .com']
+ALLOWED_HOSTS = ['hasker.alexyvassili.me', '192.168.0.138', '127.0.0.1', 'hasker.staging.me', 'www.hasker.staging.me']
 
 
 # Application definition

@@ -16,25 +16,41 @@ from hasker.secrets import DB_PASSWORD, DB_USER, SUPERUSER, SUPERUSER_MAIL, SUPE
 USER = 'alexey'
 HOST = 'alexyvassili.me'
 
-env.hosts = ['alexey@192.168.0.138']
+env.hosts = ['alexey@staging.me']
+# env.hosts = ['alexey@alexyvassili.me']
 
 
 def bootstrap():
+    input('setenv')
     set_env()
     run('uname -a')
+    input('prepare package system')
     prepare_package_system()
+    input('prepare_interpreter')
     prepare_interpreter()
+    input('prepare_uwsgi')
     prepare_uwsgi()
+    input('install_system_libs')
     install_system_libs()
+    input('create_folders')
     create_folders()
+    input('get_src')
     get_src()
+    input('set_secrets')
     set_secrets()
+    input('create_virtualenv')
     create_virtualenv()
+    input('install_venv_libs')
     install_venv_libs()
+    input('configure_postgresql')
     configure_postgresql()
+    input('configure_nginx')
     configure_nginx()
+    input('configure_uwsgi')
     configure_uwsgi()
+    input('run_django_postbootstrap_commands')
     run_django_postbootstrap_commands()
+    input('restart_all')
     restart_all()
 
 
@@ -69,12 +85,32 @@ def prepare_package_system():
     if not exists('/etc/apt/sources.list.old'):
         sudo('mv /etc/apt/sources.list /etc/apt/sources.list.old')
         upload_template('fabdeploy/sources.list', '/etc/apt/',use_sudo=True)
-    sudo('apt-get update && apt-get upgrade')
+    # sudo('apt-get update && apt-get upgrade')
     sudo('apt-get install -y aptitude')
     sudo('aptitude install -y mc vim')
 
 
 def prepare_interpreter():
+    if not exists(env.BASE_REMOTE_PYTHON_PATH):
+        need_compile = input("""Python 3.6 interpreter not found.
+                             Do you want download precompiled from git repo? (y/n) """)
+        if need_compile.lower() == 'y':
+            sudo('apt-get install -y make build-essential libssl-dev zlib1g-dev')
+            sudo('apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm')
+            sudo('apt-get install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev')
+            if exists('/tmp/Python-3.6.5'):
+                run('rm -rf /tmp/Python-3.6.5')
+            run('git clone https://github.com/alexyvassili/python-3.6.5-precompiled.git /tmp/Python-3.6.5')
+            sudo('cd /tmp/Python-3.6.5; make altinstall')
+        elif need_compile.lower() == 'n':
+            print('OK, exiting')
+            sys.exit(1)
+        else:
+            prepare_interpreter()
+
+
+def compile_interpreter():
+    set_env()
     if not exists(env.BASE_REMOTE_PYTHON_PATH):
         need_compile = input("""Python 3.6 interpreter not found.
                              Do you want download and compile this? (y/n) """)
@@ -95,7 +131,7 @@ def prepare_interpreter():
             print('OK, exiting')
             sys.exit(1)
         else:
-            prepare_interpreter()
+            compile_interpreter()
 
 
 def prepare_uwsgi():
