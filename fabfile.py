@@ -98,10 +98,10 @@ def prepare_interpreter():
             sudo('apt-get install -y make build-essential libssl-dev zlib1g-dev')
             sudo('apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm')
             sudo('apt-get install -y libncurses5-dev libncursesw5-dev xz-utils tk-dev')
-            if exists('/tmp/Python-3.6.5'):
-                run('rm -rf /tmp/Python-3.6.5')
-            run('git clone https://github.com/alexyvassili/python-3.6.5-precompiled.git /tmp/Python-3.6.5')
-            sudo('cd /tmp/Python-3.6.5; make altinstall')
+            if exists('/var/tmp/Python-3.6.5'):
+                run('rm -rf /var/tmp/Python-3.6.5')
+            run('git clone https://github.com/alexyvassili/python-3.6.5-precompiled.git /var/tmp/Python-3.6.5')
+            sudo('cd /var/tmp/Python-3.6.5; make altinstall')
         elif need_compile.lower() == 'n':
             print('OK, exiting')
             sys.exit(1)
