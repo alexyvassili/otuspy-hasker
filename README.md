@@ -23,3 +23,16 @@ A poor-man Stackoverflow based on Django Framework
 If `python3.6` not found in `/usr/bin` or in `/usr/local/bin`, `fab bootstrap` will try donwnload precompiled version and
 setup it in /usr/local. You can compile interpreter from source with command: `fab compile_interpreter`
 In theory you can run with python3.5, just remove before all f-strings from the project :)
+
+## Secrets
+And you need your own hasker/secrets.py in your local repository, for example:
+```
+DB_USER = 'hasker'
+DB_PASSWORD = 'hasker_pass'
+SECRET_KEY = '14@+4-wet=u8_ns-#ji1)8um5deb*h#'
+TEST_USERS_PASS = 'test_password' # password for test users
+HASKER_SERVICE_MAIL = 'noreply@hasker.ha'
+SUPERUSER = 'admin'
+SUPERUSER_PASS = 'admin_pass'
+SUPERUSER_MAIL = 'admin@hasker.ha'
+```
