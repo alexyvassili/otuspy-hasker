@@ -47,6 +47,7 @@
           {% if user.is_authenticated %}
           <button type="button" id="{{question.id}}" class="btn btn-sm {% if user in question.likes.all %}btn-dark{% else %}btn-outline-dark{% endif %} btn-question-like"><i data-feather="plus"></i></button>
           {% endif %}
+          </div>
         </div>
       </div>
     </div>
@@ -84,20 +85,19 @@
           <div class="col-md-1 answer-avatar"></div>
           <div class="col-md-11 answer-vote">
             <div class="btn-group" role="group" aria-label="Rating group">
+
               {% if user.is_authenticated %}
               <button type="button" id="{{answer.id}}" class="btn btn-sm {% if user in answer.dislikes.all %}btn-dark{% else %}btn-outline-dark{% endif %} btn-answer-dislike">
                 <i data-feather="minus"></i></button>
               {% endif %}
-              {% if answer.rating >= 0 %}
-              <div id="arate_{{answer.id}}" class="btn btn-sm btn-outline-success rate-area">
-              {% else %}
-              <div id="arate_{{answer.id}}" class="btn btn-sm btn-outline-danger rate-area">
+              
+              <div id="arate_{{answer.id}}" class="btn btn-sm {% if answer.rating >= 0 %}btn-outline-success{% else %}btn-outline-danger{% endif %} rate-area">{{answer.rating}}</div>
+
+              {% if user.is_authenticated %}
+              <button type="button" id="{{answer.id}}" class="btn btn-sm {% if user in answer.likes.all %}btn-dark{% else %}btn-outline-dark{% endif %} btn-answer-like"><i data-feather="plus"></i></button>
               {% endif %}
-              {{answer.rating}}</div>
-                  {% if user.is_authenticated %}
-                  <button type="button" id="{{answer.id}}" class="btn btn-sm {% if user in answer.likes.all %}btn-dark{% else %}btn-outline-dark{% endif %} btn-answer-like"><i data-feather="plus"></i></button>
-                  {% endif %}
-                </div>
+            </div>
+            
             {% if answer.is_solution %}
             <button type="button" class="btn btn-sm btn-success btn-solution" disabled>
               <i data-feather="check"></i>&nbsp;Marked as solution</button>

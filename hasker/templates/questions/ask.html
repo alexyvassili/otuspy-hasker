@@ -11,12 +11,6 @@
   <li class="list-group-item new-question-form">
     <form method="post">
       {% csrf_token %}
-  <fieldset disabled>
-  <div class="form-group d-none">
-    <label class="new-question-form-label" for="{{form.author.id_for_label}}">Author</label>
-    
-  </div>
-  </fieldset>
   <div class="form-group">
     <label class="new-question-form-label" for="{{form.title.id_for_label}}">Title of the Question</label>
     {{ form.title|addplaceholder:"What's you question? Be specific."}}

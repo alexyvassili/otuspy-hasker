@@ -1,5 +1,6 @@
+<ul class="list-group main-section">
 {% for question in questions %}
- <ul class="list-group main-section">
+ 
   <li class="list-group-item question">
     <div class="row">
       <div class="col-md-12 tag-block">
@@ -31,6 +32,9 @@
   </li>
 
   {% endfor %}
+
+</ul>
+
 {% if questions %}
  <nav aria-label="Question navigation">
   <ul class="pagination justify-content-end questions-paginator">
@@ -42,7 +46,8 @@
       </li>
     {% else %}
       <li class="page-item disabled">
-        <a class="page-link" href="?page=1" tabindex="-1">&laquo; First</a></li>
+        <a class="page-link" href="?page=1" tabindex="-1">&laquo; First</a>
+      </li>
     {% endif %}
     <li class="page-item active">
       <a class="page-link" href="#">{{ questions.number }} of 
@@ -54,11 +59,14 @@
         {{ questions.next_page_number }}</a>
       </li>
       <li class="page-item">
-        <a class="page-link" href="?page={{ questions.paginator.num_pages }}">Last &raquo;</a></li>
+        <a class="page-link" href="?page={{ questions.paginator.num_pages }}">Last &raquo;</a>
+      </li>
     {% else %}
       <li class="page-item disabled">
-        <a class="page-link" href="?page={{ questions.paginator.num_pages }}"  tabindex="-1">Last &raquo;</a></li>
+        <a class="page-link" href="?page={{ questions.paginator.num_pages }}"  tabindex="-1">Last &raquo;</a>
+      </li>
     {% endif %}
   </ul>
-{% endif %}
 </nav>
+
+{% endif %}
