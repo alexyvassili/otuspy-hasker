@@ -10,6 +10,8 @@ def crop_square(image_field, img_type):
     image_file = BytesIO(image_field.read())
     image = Image.open(image_file)
     width, height = image.size  # Get dimensions
+    if width == height:
+        return image_file
     square_len = min(width, height)
     left = 0
     top = 0
