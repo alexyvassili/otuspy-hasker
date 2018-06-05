@@ -50,6 +50,7 @@ def bootstrap():
     configure_uwsgi()
     input('run_django_postbootstrap_commands')
     run_django_postbootstrap_commands()
+    create_superuser()
     input('restart_all')
     restart_all()
 
@@ -239,6 +240,9 @@ def configure_uwsgi():
 def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
     _run_django_management_command('collectstatic --noinput')
+
+
+def create_superuser():
     # Create superuser if not exists
     _run_django_management_command(f'shell -c "from django.contrib.auth.models import User; '
                                    f'exists = bool(User.objects.filter(username=\'{SUPERUSER}\')); '
