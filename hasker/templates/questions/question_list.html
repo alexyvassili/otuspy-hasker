@@ -16,8 +16,10 @@
       </a>
       </div>
       <div class="col-md-2 answers-counter-block">
-        <div class="answers-counter">{{ question.answer_set.count }}</div>
-        <div class="answers-counter-text">answer{{ question.answer_set.count|pluralize:" ,s" }}</div>
+         
+           <div class="answers-counter">{{ question.answers.count }}</div> 
+           <div class="answers-counter-text">answer{{ question.answers.count|pluralize:" ,s" }}</div>
+        
       </div>
     </div>
     <div class="row">

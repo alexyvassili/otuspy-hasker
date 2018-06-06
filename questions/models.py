@@ -66,7 +66,7 @@ class Question(models.Model):
 class Answer(models.Model):
     """содержание,	автор,	дата	написания,	флаг	правильного	ответа"""
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     content = models.TextField()
     is_solution = models.BooleanField(default=False)
     likes = models.ManyToManyField(User, verbose_name="a_liked from",

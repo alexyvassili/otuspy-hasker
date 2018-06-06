@@ -7,7 +7,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import HttpResponse
+from django.db.models import Count
+from django.http import HttpResponse, Http404
 from django.contrib.postgres.search import SearchVector
 
 from questions.forms import (SignUpForm, UserUpdateForm,
@@ -18,17 +19,19 @@ from questions.utils import send_answer_mail
 
 
 def index(request):
-    questions = Question.objects.all().prefetch_related('tags').order_by('-votes')
+    questions = Question.objects.all().select_related('author').prefetch_related('tags', 'answers').order_by('-votes')
+    # answers = Answer.objects.values('question__id').annotate(answers=Count('question'))
     paginator = Paginator(questions, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
     return render(request, 'questions/index.html', {'questions': questions,
+                                                    # 'answers_count': answers_count,
                                                     'title': 'Home',
                                                     'trending': _get_trending(),})
 
 
 def new(request):
-    questions = Question.objects.all().prefetch_related('tags').order_by('-created')
+    questions = Question.objects.all().select_related('author').prefetch_related('tags', 'answers').order_by('-created')
     paginator = Paginator(questions, 20)
     page = request.GET.get('page')
     questions = paginator.get_page(page)
@@ -84,11 +87,15 @@ def question(request, uid):
                              post_id=uid, question_title=pub.question.title)
             return redirect('question', uid)
     else:
-        question = get_object_or_404(Question, pk=uid)
+        queryset = Question.objects.select_related('author', 'author__profile').prefetch_related('likes', 'dislikes')
+
+        question = get_object_or_404(queryset, pk=uid)
+
         title = question.title
         is_owner = question.author.id == request.user.id
         # '-rating' change to 'created'
-        answers = Answer.objects.filter(question__id=uid).order_by('-is_solution', 'created')
+        answers = Answer.objects.filter(question__id=uid).select_related('author',  'author__profile')\
+            .prefetch_related('likes', 'dislikes').order_by('-is_solution', 'created')
         form = NewAnswerForm()
         return render(request, 'questions/q.html', {'title': title,
                                                     'question': question,
@@ -234,7 +241,8 @@ def _get_trending():
     Для еще большего различия в hot questions можно было бы добавлять не по голосам, а по рейтингу.
     """
     last_month = datetime.today() - timedelta(days=30)
-    trending = Question.objects.filter(created__gte=last_month).order_by('-votes')[:15]
+    trending = Question.objects.filter(created__gte=last_month).prefetch_related('answers').order_by('-votes')[:15]
+    # trending = []
     return trending
 
 
