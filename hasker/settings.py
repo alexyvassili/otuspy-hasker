@@ -140,6 +140,12 @@ class Dev(Common):
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         }
     }
+    # CACHES = {
+    #     'default': {
+    #         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+    #         'LOCATION': 'questions_cache',
+    #     }
+    # }
 
 
 class Prod(Common):
