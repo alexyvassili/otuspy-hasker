@@ -241,6 +241,7 @@ def configure_uwsgi():
 def run_django_postbootstrap_commands():
     _run_django_management_command('migrate')
     _run_django_management_command('collectstatic --noinput')
+    _run_django_management_command('createcachetable')
 
 
 def create_superuser():

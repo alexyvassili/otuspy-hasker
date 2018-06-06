@@ -135,9 +135,24 @@ class Dev(Common):
 
     INTERNAL_IPS = ['127.0.0.1', ]  # For Django Debug Toolbar
 
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
 
 class Prod(Common):
     """
     The in-production settings.
     """
     DEBUG = False
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'questions_cache',
+        }
+    }
+
+

@@ -1,4 +1,6 @@
 {% if trending %}
+{% load cache %}
+{% cache 3600 trending %}
 <h3 class="trending-h">Trending</h3>  
 <ul class="list-group">
   {% for question in trending %}
@@ -21,4 +23,5 @@
   </li>
   {% endfor %}
  </ul>
+ {% endcache %}
 {% endif %}
