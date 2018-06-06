@@ -80,6 +80,7 @@ def set_env():
     else:
         env.BASE_REMOTE_PYTHON_PATH = '/usr/local/bin/python3.6'
     env.VENV_REMOTE_PYTHON_PATH = os.path.join(env.REMOTE_VENV_PATH, 'bin', 'python3.6')
+    env.DJANGO_CONFIGURATION = 'Prod'
 
 
 def prepare_package_system():
@@ -252,6 +253,7 @@ def create_superuser():
 
 
 def restart_all():
+    run('export DJANGO_CONFIGURATION=Prod')
     sudo('systemctl restart nginx')
     sudo('systemctl restart uwsgi')
 
@@ -289,4 +291,5 @@ def _run_django_management_command(command):
     #     command,
     # ))
     # line below means just e.g. python manage.py migrate
-    run(f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py')} {command}")
+    run(f"DJANGO_CONFIGURATION={env.DJANGO_CONFIGURATION} "
+        f"{env.VENV_REMOTE_PYTHON_PATH} {os.path.join(env.REMOTE_PROJECT_PATH, 'manage.py')} {command}")

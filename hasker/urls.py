@@ -31,3 +31,9 @@ urlpatterns += [
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 
+if settings.DEBUG:
+    from django.conf.urls import url
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
