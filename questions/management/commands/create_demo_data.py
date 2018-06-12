@@ -30,6 +30,7 @@ def get_user(no_user=None):
     else:
         return get_user()
 
+
 from questions.models import Question, Tag, Answer
 
 
