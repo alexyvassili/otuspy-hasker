@@ -79,3 +79,13 @@ class Answer(models.Model):
 
     def __str__(self):
         return "{}".format(self.content[:50])
+
+
+class Invite(models.Model):
+    """регистрация по инвайтам"""
+    token = models.CharField(max_length=255, unique=True)
+    is_active = models.BooleanField(default=True)
+    user_id_from = models.IntegerField(default=0)  # чей токен
+    user_id_to = models.IntegerField(default=0)  # кто им воспользовался
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=False, auto_now=True)

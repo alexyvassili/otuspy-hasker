@@ -20,6 +20,14 @@
           Profile
         </a>
       </li>
+      {% if user.is_staff %}
+      <li class="nav-item loggedin-li">
+        <a class="nav-link active  signup" href="/invite">
+          <i data-feather="settings"></i>
+          Invites
+        </a>
+      </li>
+      {% endif %}
       <li class="nav-item loggedin-li">
         <a class="nav-link active  signup" href="{% url 'logout'%}?next={{request.path}}">
           <i data-feather="log-out"></i>

@@ -14,7 +14,7 @@ from django.contrib.postgres.search import SearchVector
 from questions.forms import (SignUpForm, UserUpdateForm,
                              UserProfileForm, NewQuestionForm,
                              NewAnswerForm)
-from questions.models import Profile, Tag, Question, Answer, AVATAR_DEFAULT
+from questions.models import Profile, Tag, Question, Answer, Invite, AVATAR_DEFAULT
 from questions.utils import send_answer_mail
 
 
@@ -173,6 +173,26 @@ def signup(request):
                                                         'title': 'Sign Up',
                                                         'trending': _get_trending(),
                                                         })
+
+
+@login_required
+def invite(request):
+    invites = Invite.objects.filter(is_used=False)
+    render(request, 'registration/invite.html', {  # 'form': form,
+                                                 'title': 'Invites',
+                                                 'trending': _get_trending(),
+                                                 })
+
+
+@login_required
+def invite_generate(request):
+    token = generate_invite_token
+    invites = Invite.objects.filter(is_used=False)
+    render(request, 'registration/invite.html', {  # 'form': form,
+                                                 'title': 'Invites',
+                                                 'trending': _get_trending(),
+                                                 })
+
 
 @login_required
 def set_default_avatar(request):
