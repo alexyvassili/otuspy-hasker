@@ -1,7 +1,6 @@
 from django.urls import path
 
-from . import views, views_drf, api_schema
-
+from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -21,14 +20,4 @@ urlpatterns = [
     path('q/answer/<int:ans_uid>/dislike/', views.dislike_answer, name='dislike_answer'),
     path('q/answer/<int:ans_uid>/is_solution/', views.set_answer_as_solution, name='set_answer_as_solution'),
     path('ajax/tags/push/', views.send_all_tags, name="send_all_tags"),
-
-    #                 ###  DRF URL's ###
-
-    path('api/', api_schema.schema_view),
-    path('api/v1.0/', api_schema.schema_view),
-    path('api/v1.0/questions/', views_drf.questions_list),
-    path('api/v1.0/questions/<int:uid>/', views_drf.question_detail),
-    path('api/v1.0/questions/<int:uid>/answers/', views_drf.question_answers),
-    path('api/v1.0/trending/', views_drf.trending),
-    path('api/v1.0/search/', views_drf.search),
 ]

@@ -1,14 +1,13 @@
 from django.http import HttpResponse, JsonResponse
 from django.contrib.postgres.search import SearchVector
 
-from rest_framework import viewsets
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from questions.models import Question, Answer
-from questions.serializers import QuestionSerializer, AnswerSerializer
+from questions.api.serializers import QuestionSerializer, AnswerSerializer
 from questions.views import _get_trending
 
 
