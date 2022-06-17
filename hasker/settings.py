@@ -74,6 +74,8 @@ class Common(Configuration):
         }
     }
 
+    DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
     # Password validation
     # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 

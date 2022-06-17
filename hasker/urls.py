@@ -39,8 +39,8 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
-    from django.conf.urls import url
+    from django.urls import re_path
     import debug_toolbar
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        re_path(r'^__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns

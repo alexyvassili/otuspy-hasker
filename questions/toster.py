@@ -3,14 +3,14 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-HOST = 'toster.ru'
-URL = f"https://{HOST}/tag/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5/questions"
+HOST = 'qna.habr.com'
+URL = f"https://qna.habr.com/tag/it-%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5/questions"
 
 session = requests.Session()
 
 headers = {
         'Host': HOST,
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0',
+        'User-Agent': 'Mozilla/8.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/90.0',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
         'Accept-encoding': 'gzip, deflate, br',
@@ -19,7 +19,7 @@ headers = {
 
 
 def get_tags(obj):
-    tags_container = obj.find_all("nav", attrs={"class": "question__tags"})[0]
+    tags_container = obj.find_all("div", attrs={"class": "question__tags"})[0]
     tags = tags_container.find_all("li", attrs={"class": "tags-list__item"})
     tags = [tag.text.strip() for tag in tags]
     return tags

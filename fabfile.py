@@ -14,10 +14,10 @@ from hasker.secrets import DB_PASSWORD, DB_USER, SUPERUSER, SUPERUSER_MAIL, SUPE
 
 
 USER = 'alexey'
-HOST = 'alexyvassili.me'
+HOST = 'hasker.alexyvassili.me'
 
 # env.hosts = ['alexey@staging.me']
-env.hosts = ['alexey@alexyvassili.me']
+env.hosts = ['alexey@hasker.alexyvassili.me']
 
 
 def bootstrap():
